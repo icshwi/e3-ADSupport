@@ -27,16 +27,20 @@
 
 where_am_I := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 
-include $(REQUIRE_TOOLS)/driver.makefile
-
-ADSUPPORT = ADSupport
+ifdef ($(USE_ADSUPPORT_MAKEFILE))
+	include Makefile
+else
+	include $(REQUIRE_TOOLS)/driver.makefile
+	
+	ADSUPPORT = ADSupport
 
 #NETCDF_SUPP := $(ADSUPPORT)/supportApp/netCDFSrc
 #JPG_SUPP    := $(ADSUPPORT)/supportApp/jpegSrc
 #ZLIB_SUPP   := $(ADSUPPORT)/supportApp/zlibSrc
 
 #Adding $ADSUPPORT at the beginning wildcard doesnìt work...
-ZLIB_SUPP   := supportApp/zlibSrc
+ZLIB_SUPP  = supportApp/zlibSrc
+SZIP_SUPP  = supportApp/szipSrc
 
 #Configure Makefile for zLib support
 ifeq ($(WITH_ZLIB),YES)
@@ -74,20 +78,43 @@ ifeq ($(WITH_ZLIB),YES)
     #LIB_SRCS += uncompr.c
     #LIB_SRCS += zutil.c
     
-    SOURCES += $(wildcard $(ZLIB_SUPP)/*.cpp $(ZLIB_SUPP)/*.c)
+    SOURCES += $(wildcard $(ZLIB_SUPP)/*.c)
 
   endif # ($(ZLIB_EXTERNAL),NO)
+  
+#%:
+#	@echo "WITH_ZLIB: ${WITH_ZLIB} -> ZLIB_EXTERNAL: $(ZLIB_EXTERNAL) SOURCES: $(SOURCES)"
 endif # ($(WITH_ZLIB),YES)
 
+ifeq ($(WITH_SZIP),YES)
+  ifeq ($(SZIP_EXTERNAL),NO)
 
-#ifeq ($(WITH_ZLIB),YES)
-#  ifeq ($(ZLIB_EXTERNAL),NO)
-#  	
-#  endif
-#endif
+    LIBRARY_IOC = szip
 
-%:
-	@echo "WITH_ZLIB: ${WITH_ZLIB} -> $(ZLIB_SUPP) SOURCES: $(SOURCES)"
+    ifeq ($(SHARED_LIBRARIES),YES)
+      USR_CFLAGS_WIN32 += -DSZ_BUILT_AS_DYNAMIC_LIB -Dszip_EXPORTS
+    endif
+
+    HEADERS += SZconfig.h
+    HEADERS += rice.h
+    HEADERS += ricehdf.h
+    HEADERS += szip_adpt.h
+    HEADERS += szlib.h
+    
+    SOURCES += $(wildcard $(SZIP_SUPP)/*.c)
+
+#    SOURCES += encoding.c
+#    SOURCES += rice.c
+#    SOURCES += sz_api.c
+
+  endif # ($(SZIP_EXTERNAL),NO)
+endif # ($(WITH_SZIP),YES)
+
+#%:
+#	@#echo "CURDIR = ${CURDIR}; MODULE = ${MODULE}; MAKEVERSION = ${MAKE} -f ${USERMAKEFILE} LIBVERSION=${LIBVERSION}; DIRS = ${DIRS}"
+#	@echo "WITH_ZLIB: ${WITH_ZLIB} -> ZLIB_EXTERNAL: $(ZLIB_EXTERNAL) SOURCES: $(SOURCES)"
+#	@echo "WITH_SZIP: ${YES_SZIP} -> SZIP_EXTERNAL: $(SZIP_EXTERNAL) $(SZIP_SUPP) SOURCES: $(SOURCES)"
+endif # USE_ADSUPPORT_MAKEFILE defined
 
 # APP:=calcApp
 # APPDB:=$(APP)/Db
