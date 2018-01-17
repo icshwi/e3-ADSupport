@@ -7,16 +7,13 @@
 .PHONY: epics epics-clean
 
 epics:
-	$(QUIET)echo "EPICS_BASE=$(COMMUNITY_EPICS_BASE)"  > $(TOP)/$(EPICS_MODULE_SRC_PATH)/configure/RELEASE
-	$(QUIET)echo "INSTALL_LOCATION=$(M_IOCSTATS)" > $(TOP)/$(EPICS_MODULE_SRC_PATH)/configure/CONFIG_SITE
-	#$(QUIET)echo "WITH_ZLIB=YES" >> $(TOP)/$(EPICS_MODULE_SRC_PATH)/configure/CONFIG_SITE
-	#$(QUIET)echo "ZLIB_EXTERNAL=NO" >> $(TOP)/$(EPICS_MODULE_SRC_PATH)/configure/CONFIG_SITE
-	#$(QUIET)echo "WITH_HDF5=YES" >> $(TOP)/$(EPICS_MODULE_SRC_PATH)/configure/CONFIG_SITE
-	#$(QUIET)echo "HDF5_EXTERNAL=NO" >> $(TOP)/$(EPICS_MODULE_SRC_PATH)/configure/CONFIG_SITE
-	#WITH_XML2=YES
-	#XML2_EXTERNAL=NO
-	#Debug line added to verify when CONFIG_SITE is included
-	#$(QUIET)echo "%:\n\t@echo \"I'm using CONFIG_SITE\"\n " >> $(TOP)/$(EPICS_MODULE_SRC_PATH)/configure/CONFIG_SITE
+	$(QUIET) echo "EPICS_BASE=$(COMMUNITY_EPICS_BASE)"  > $(TOP)/$(EPICS_MODULE_SRC_PATH)/configure/RELEASE
+	$(QUIET) echo "INSTALL_LOCATION=$(M_IOCSTATS)" > $(TOP)/$(EPICS_MODULE_SRC_PATH)/configure/CONFIG_SITE
+	$(QUIET) #echo "WITH_ZLIB=YES" >> $(TOP)/$(EPICS_MODULE_SRC_PATH)/configure/CONFIG_SITE
+	$(QUIET) #echo "ZLIB_EXTERNAL=NO" >> $(TOP)/$(EPICS_MODULE_SRC_PATH)/configure/CONFIG_SITE
+	$(QUIET) #echo "WITH_HDF5=YES" >> $(TOP)/$(EPICS_MODULE_SRC_PATH)/configure/CONFIG_SITE
+	$(QUIET) #echo "HDF5_EXTERNAL=NO" >> $(TOP)/$(EPICS_MODULE_SRC_PATH)/configure/CONFIG_SITE
+	$(QUIET) #Debug line added to verify when CONFIG_SITE is included
 	sudo -E bash -c "$(MAKE) -C $(EPICS_MODULE_SRC_PATH)"
 
 epics-clean:

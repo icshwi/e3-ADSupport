@@ -27,20 +27,20 @@
 
 where_am_I := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 
-ifdef ($(USE_ADSUPPORT_MAKEFILE))
-	include Makefile
-else
-	include $(REQUIRE_TOOLS)/driver.makefile
+include $(REQUIRE_TOOLS)/driver.makefile
 	
-	ADSUPPORT = ADSupport
-
-#NETCDF_SUPP := $(ADSUPPORT)/supportApp/netCDFSrc
-#JPG_SUPP    := $(ADSUPPORT)/supportApp/jpegSrc
-#ZLIB_SUPP   := $(ADSUPPORT)/supportApp/zlibSrc
+ADSUPPORT = ADSupport
 
 #Adding $ADSUPPORT at the beginning wildcard doesnìt work...
 ZLIB_SUPP  = supportApp/zlibSrc
 SZIP_SUPP  = supportApp/szipSrc
+
+USR_CFLAGS   += -Wno-unused-variable
+USR_CFLAGS   += -Wno-unused-function
+USR_CFLAGS   += -Wno-unused-but-set-variable
+USR_CPPFLAGS += -Wno-unused-variable
+USR_CPPFLAGS += -Wno-unused-function
+USR_CPPFLAGS += -Wno-unused-but-set-variable
 
 #Configure Makefile for zLib support
 ifeq ($(WITH_ZLIB),YES)
@@ -114,20 +114,12 @@ endif # ($(WITH_SZIP),YES)
 #	@#echo "CURDIR = ${CURDIR}; MODULE = ${MODULE}; MAKEVERSION = ${MAKE} -f ${USERMAKEFILE} LIBVERSION=${LIBVERSION}; DIRS = ${DIRS}"
 #	@echo "WITH_ZLIB: ${WITH_ZLIB} -> ZLIB_EXTERNAL: $(ZLIB_EXTERNAL) SOURCES: $(SOURCES)"
 #	@echo "WITH_SZIP: ${YES_SZIP} -> SZIP_EXTERNAL: $(SZIP_EXTERNAL) $(SZIP_SUPP) SOURCES: $(SOURCES)"
-endif # USE_ADSUPPORT_MAKEFILE defined
 
 # APP:=calcApp
 # APPDB:=$(APP)/Db
 # APPSRC:=$(APP)/src
 
 # USR_INCLUDES += -I$(where_am_I)/$(APPSRC)
-
-#USR_CFLAGS   += -Wno-unused-variable
-#USR_CFLAGS   += -Wno-unused-function
-#USR_CFLAGS   += -Wno-unused-but-set-variable
-#USR_CPPFLAGS += -Wno-unused-variable
-#USR_CPPFLAGS += -Wno-unused-function
-#USR_CPPFLAGS += -Wno-unused-but-set-variable
 
 # TEMPLATES += $(wildcard $(APPDB)/*.db)
 

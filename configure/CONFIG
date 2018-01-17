@@ -14,3 +14,11 @@ export E3_ENV_PATH:=e3-env
 export E3_ENV_NAME:=e3-env
 #export E3_ENV_NAME:=E3_ENV_CONF
 #export E3_ENV_TAG:=v0.1
+
+#ADSupport module configuration
+#export WITH_XML2     = YES
+#export XML2_EXTERNAL = NO
+export WITH_SZIP     = YES
+export SZIP_EXTERNAL = NO
+export WITH_ZLIB     = YES
+export ZLIB_EXTERNAL = NO
