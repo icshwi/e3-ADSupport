@@ -32,10 +32,18 @@ include $(REQUIRE_TOOLS)/driver.makefile
 ADSUPPORT = ADSupport
 
 #Adding $ADSUPPORT at the beginning wildcard doesnìt work...
-ZLIB_SUPP    = supportApp/zlibSrc
-SZIP_SUPP    = supportApp/szipSrc
-HD5    = supportApp/hdf5Src
-HD5_HL = supportApp/hdf5_hlSrc
+NETCDF_DIR  = supportApp/netCDFSrc
+JPEG_DIR    = supportApp/jpegSrc
+ZLIB_DIR    = supportApp/zlibSrc
+TIFF_DIR    = supportApp/tiffSrc
+SZIP_DIR    = supportApp/szipSrc
+HDF5_DIR    = supportApp/hdf5Src
+HDF5HL_DIR  = supportApp/hdf5_hlSrc
+XML2_DIR	= supportApp/xml2Src
+
+
+#Do not consider WIN32 compilation at this stage
+SHARED_LIBRARIES = NO
 
 
 USR_CFLAGS   += -Wno-unused-variable
@@ -45,11 +53,655 @@ USR_CPPFLAGS += -Wno-unused-variable
 USR_CPPFLAGS += -Wno-unused-function
 USR_CPPFLAGS += -Wno-unused-but-set-variable
 
+#################################### HDF5 (and HDF_HL) #####################################
+
+#Building HDF5_DIR Support. This inclueds both hd5Src and hd5_hdlSrc
+ifeq ($(WITH_HDF5),YES)
+  ifeq ($(HDF5_EXTERNAL),NO)
+
+    #USR_INCLUDES += -I../$(HDF5_DIR)
+    #USR_INCLUDES += -I../$(HDF5HL_DIR)
+    #It seems that this is not needed since in some way there are already added before...
+    #USR_INCLUDES += -I$(where_am_I)/$(HDF5_DIR)
+    #USR_INCLUDES += -I$(where_am_I)/$(HDF5HL_DIR)
+
+    USR_CFLAGS += -D NDEBUG
+    
+    ifeq ($(SHARED_LIBRARIES), YES)
+      USR_CFLAGS_WIN32 += -D H5_BUILT_AS_DYNAMIC_LIB 
+      USR_CFLAGS_WIN32 += -D hdf5_hl_shared_EXPORTS
+      ifeq (mingw, $(findstring mingw, $(T_A)))
+        USR_CFLAGS_WIN32 += -D__MSVCRT_VERSION__=0x800
+      else
+        # The thread code on mingw needs work, get compiler errors
+        USR_CFLAGS_WIN32 += -D H5_HAVE_THREADSAFE
+      endif
+    endif
+    
+    #Headers defined for $(HDF5_DIR)
+    HEADERS += $(HDF5_DIR)/H5ACpublic.h
+    HEADERS += $(HDF5_DIR)/H5api_adpt.h
+    HEADERS += $(HDF5_DIR)/H5Apublic.h
+    HEADERS += $(HDF5_DIR)/H5B2public.h
+    HEADERS += $(HDF5_DIR)/H5Bpublic.h
+    HEADERS += $(HDF5_DIR)/H5Cpublic.h
+    HEADERS += $(HDF5_DIR)/H5Dpublic.h
+    HEADERS += $(HDF5_DIR)/H5Epubgen.h
+    HEADERS += $(HDF5_DIR)/H5Epublic.h
+    HEADERS += $(HDF5_DIR)/H5FDcore.h
+    HEADERS += $(HDF5_DIR)/H5FDdirect.h
+    HEADERS += $(HDF5_DIR)/H5FDfamily.h
+    HEADERS += $(HDF5_DIR)/H5FDlog.h
+    HEADERS += $(HDF5_DIR)/H5FDmpi.h
+    HEADERS += $(HDF5_DIR)/H5FDmpio.h
+    HEADERS += $(HDF5_DIR)/H5FDmulti.h
+    HEADERS += $(HDF5_DIR)/H5FDpublic.h
+    HEADERS += $(HDF5_DIR)/H5FDsec2.h
+    HEADERS += $(HDF5_DIR)/H5FDstdio.h
+    HEADERS += $(HDF5_DIR)/H5FDwindows.h
+    HEADERS += $(HDF5_DIR)/H5FSpublic.h
+    HEADERS += $(HDF5_DIR)/H5Fpublic.h
+    HEADERS += $(HDF5_DIR)/H5Gpublic.h
+    HEADERS += $(HDF5_DIR)/H5HFpublic.h
+    HEADERS += $(HDF5_DIR)/H5HGpublic.h
+    HEADERS += $(HDF5_DIR)/H5HLpublic.h
+    HEADERS += $(HDF5_DIR)/H5Ipublic.h
+    HEADERS += $(HDF5_DIR)/H5Lpublic.h
+    HEADERS += $(HDF5_DIR)/H5MMpublic.h
+    HEADERS += $(HDF5_DIR)/H5Opublic.h
+    HEADERS += $(HDF5_DIR)/H5overflow.h
+    HEADERS += $(HDF5_DIR)/H5PLextern.h
+    HEADERS += $(HDF5_DIR)/H5PLpublic.h
+    HEADERS += $(HDF5_DIR)/H5Ppublic.h
+    HEADERS += $(HDF5_DIR)/H5public.h
+    HEADERS += $(HDF5_DIR)/H5Rpublic.h
+    HEADERS += $(HDF5_DIR)/H5Spublic.h
+    HEADERS += $(HDF5_DIR)/H5Tpublic.h
+    HEADERS += $(HDF5_DIR)/H5version.h
+    HEADERS += $(HDF5_DIR)/H5Zpublic.h
+    HEADERS += $(HDF5_DIR)/hdf5.h
+    HEADERS += $(HDF5_DIR)/H5pubconf.h
+    HEADERS_Linux += $(HDF5_DIR)/H5pubconf_32.h
+    HEADERS_Linux += $(HDF5_DIR)/H5pubconf_64.h
+
+
+	#Headers defined for $(HDF5HL_DIR)
+    HEADERS += $(HDF5HL_DIR)/H5DOpublic.h
+    HEADERS += $(HDF5HL_DIR)/H5DSpublic.h
+    HEADERS += $(HDF5HL_DIR)/H5IMpublic.h
+    HEADERS += $(HDF5HL_DIR)/H5LDpublic.h
+    HEADERS += $(HDF5HL_DIR)/H5LTpublic.h
+    HEADERS += $(HDF5HL_DIR)/H5PTpublic.h
+    HEADERS += $(HDF5HL_DIR)/H5TBpublic.h
+    HEADERS += $(HDF5HL_DIR)/hdf5_hl.h
+
+	
+	#Add all sources from HD5_SUPP and HD5_HDL_SUPP
+	#SOURCES += $(wildcard $(HDF5_DIR)/*.c wildcard $(HDF5HL_DIR)/*.c)
+	
+	#Include sorce for HDF5_DIR
+	SOURCES += $(HDF5_DIR)/H5.c
+    SOURCES += $(HDF5_DIR)/H5checksum.c
+    SOURCES += $(HDF5_DIR)/H5dbg.c
+    SOURCES += $(HDF5_DIR)/H5system.c
+    SOURCES += $(HDF5_DIR)/H5timer.c
+    SOURCES += $(HDF5_DIR)/H5trace.c
+    SOURCES += $(HDF5_DIR)/H5A.c
+    SOURCES += $(HDF5_DIR)/H5Abtree2.c
+    SOURCES += $(HDF5_DIR)/H5Adense.c
+    SOURCES += $(HDF5_DIR)/H5Adeprec.c
+    SOURCES += $(HDF5_DIR)/H5Aint.c
+    SOURCES += $(HDF5_DIR)/H5Atest.c
+    SOURCES += $(HDF5_DIR)/H5AC.c
+    SOURCES += $(HDF5_DIR)/H5AClog.c
+    SOURCES += $(HDF5_DIR)/H5ACdbg.c
+    SOURCES += $(HDF5_DIR)/H5ACproxy_entry.c
+    SOURCES += $(HDF5_DIR)/H5B.c
+    SOURCES += $(HDF5_DIR)/H5Bcache.c
+    SOURCES += $(HDF5_DIR)/H5Bdbg.c
+    SOURCES += $(HDF5_DIR)/H5B2.c
+    SOURCES += $(HDF5_DIR)/H5B2cache.c
+    SOURCES += $(HDF5_DIR)/H5B2dbg.c
+    SOURCES += $(HDF5_DIR)/H5B2hdr.c
+    SOURCES += $(HDF5_DIR)/H5B2int.c
+    SOURCES += $(HDF5_DIR)/H5B2internal.c
+    SOURCES += $(HDF5_DIR)/H5B2leaf.c
+    SOURCES += $(HDF5_DIR)/H5B2stat.c
+    SOURCES += $(HDF5_DIR)/H5B2test.c
+    SOURCES += $(HDF5_DIR)/H5C.c
+    SOURCES += $(HDF5_DIR)/H5Cdbg.c
+    SOURCES += $(HDF5_DIR)/H5Cepoch.c
+    SOURCES += $(HDF5_DIR)/H5Cimage.c
+    SOURCES += $(HDF5_DIR)/H5Clog.c
+    SOURCES += $(HDF5_DIR)/H5Cprefetched.c
+    SOURCES += $(HDF5_DIR)/H5Cquery.c
+    SOURCES += $(HDF5_DIR)/H5Ctag.c
+    SOURCES += $(HDF5_DIR)/H5Ctest.c
+    SOURCES += $(HDF5_DIR)/H5CS.c
+    SOURCES += $(HDF5_DIR)/H5D.c
+    SOURCES += $(HDF5_DIR)/H5Dbtree.c
+    SOURCES += $(HDF5_DIR)/H5Dbtree2.c
+    SOURCES += $(HDF5_DIR)/H5Dchunk.c
+    SOURCES += $(HDF5_DIR)/H5Dcompact.c
+    SOURCES += $(HDF5_DIR)/H5Dcontig.c
+    SOURCES += $(HDF5_DIR)/H5Ddbg.c
+    SOURCES += $(HDF5_DIR)/H5Ddeprec.c
+    SOURCES += $(HDF5_DIR)/H5Dearray.c
+    SOURCES += $(HDF5_DIR)/H5Defl.c
+    SOURCES += $(HDF5_DIR)/H5Dfarray.c
+    SOURCES += $(HDF5_DIR)/H5Dfill.c
+    SOURCES += $(HDF5_DIR)/H5Dint.c
+    SOURCES += $(HDF5_DIR)/H5Dio.c
+    SOURCES += $(HDF5_DIR)/H5Dlayout.c
+    SOURCES += $(HDF5_DIR)/H5Dnone.c
+    SOURCES += $(HDF5_DIR)/H5Doh.c
+    SOURCES += $(HDF5_DIR)/H5Dscatgath.c
+    SOURCES += $(HDF5_DIR)/H5Dselect.c
+    SOURCES += $(HDF5_DIR)/H5Dsingle.c
+    SOURCES += $(HDF5_DIR)/H5Dtest.c
+    SOURCES += $(HDF5_DIR)/H5Dvirtual.c
+    SOURCES += $(HDF5_DIR)/H5E.c
+    SOURCES += $(HDF5_DIR)/H5Edeprec.c
+    SOURCES += $(HDF5_DIR)/H5Eint.c
+    SOURCES += $(HDF5_DIR)/H5EA.c
+    SOURCES += $(HDF5_DIR)/H5EAcache.c
+    SOURCES += $(HDF5_DIR)/H5EAdbg.c
+    SOURCES += $(HDF5_DIR)/H5EAdblkpage.c
+    SOURCES += $(HDF5_DIR)/H5EAdblock.c
+    SOURCES += $(HDF5_DIR)/H5EAhdr.c
+    SOURCES += $(HDF5_DIR)/H5EAiblock.c
+    SOURCES += $(HDF5_DIR)/H5EAint.c
+    SOURCES += $(HDF5_DIR)/H5EAsblock.c
+    SOURCES += $(HDF5_DIR)/H5EAstat.c
+    SOURCES += $(HDF5_DIR)/H5EAtest.c
+    SOURCES += $(HDF5_DIR)/H5F.c
+    SOURCES += $(HDF5_DIR)/H5Faccum.c
+    SOURCES += $(HDF5_DIR)/H5Fcwfs.c
+    SOURCES += $(HDF5_DIR)/H5Fdbg.c
+    SOURCES += $(HDF5_DIR)/H5Fdeprec.c
+    SOURCES += $(HDF5_DIR)/H5Fefc.c
+    SOURCES += $(HDF5_DIR)/H5Ffake.c
+    SOURCES += $(HDF5_DIR)/H5Fint.c
+    SOURCES += $(HDF5_DIR)/H5Fio.c
+    SOURCES += $(HDF5_DIR)/H5Fmount.c
+    SOURCES += $(HDF5_DIR)/H5Fquery.c
+    SOURCES += $(HDF5_DIR)/H5Fsfile.c
+    SOURCES += $(HDF5_DIR)/H5Fspace.c
+    SOURCES += $(HDF5_DIR)/H5Fsuper.c
+    SOURCES += $(HDF5_DIR)/H5Fsuper_cache.c
+    SOURCES += $(HDF5_DIR)/H5Ftest.c
+    SOURCES += $(HDF5_DIR)/H5FA.c
+    SOURCES += $(HDF5_DIR)/H5FAcache.c
+    SOURCES += $(HDF5_DIR)/H5FAdbg.c
+    SOURCES += $(HDF5_DIR)/H5FAdblock.c
+    SOURCES += $(HDF5_DIR)/H5FAdblkpage.c
+    SOURCES += $(HDF5_DIR)/H5FAhdr.c
+    SOURCES += $(HDF5_DIR)/H5FAint.c
+    SOURCES += $(HDF5_DIR)/H5FAstat.c
+    SOURCES += $(HDF5_DIR)/H5FAtest.c
+    SOURCES += $(HDF5_DIR)/H5FD.c
+    SOURCES += $(HDF5_DIR)/H5FDcore.c
+    SOURCES += $(HDF5_DIR)/H5FDfamily.c
+    SOURCES += $(HDF5_DIR)/H5FDint.c
+    SOURCES += $(HDF5_DIR)/H5FDlog.c
+    SOURCES += $(HDF5_DIR)/H5FDmulti.c
+    SOURCES += $(HDF5_DIR)/H5FDsec2.c
+    SOURCES += $(HDF5_DIR)/H5FDspace.c
+    SOURCES += $(HDF5_DIR)/H5FDstdio.c
+    SOURCES += $(HDF5_DIR)/H5FDtest.c
+    SOURCES += $(HDF5_DIR)/H5FL.c
+    SOURCES += $(HDF5_DIR)/H5FO.c
+    SOURCES += $(HDF5_DIR)/H5FS.c
+    SOURCES += $(HDF5_DIR)/H5FScache.c
+    SOURCES += $(HDF5_DIR)/H5FSdbg.c
+    SOURCES += $(HDF5_DIR)/H5FSint.c
+    SOURCES += $(HDF5_DIR)/H5FSsection.c
+    SOURCES += $(HDF5_DIR)/H5FSstat.c
+    SOURCES += $(HDF5_DIR)/H5FStest.c
+    SOURCES += $(HDF5_DIR)/H5G.c
+    SOURCES += $(HDF5_DIR)/H5Gbtree2.c
+    SOURCES += $(HDF5_DIR)/H5Gcache.c
+    SOURCES += $(HDF5_DIR)/H5Gcompact.c
+    SOURCES += $(HDF5_DIR)/H5Gdense.c
+    SOURCES += $(HDF5_DIR)/H5Gdeprec.c
+    SOURCES += $(HDF5_DIR)/H5Gent.c
+    SOURCES += $(HDF5_DIR)/H5Gint.c
+    SOURCES += $(HDF5_DIR)/H5Glink.c
+    SOURCES += $(HDF5_DIR)/H5Gloc.c
+    SOURCES += $(HDF5_DIR)/H5Gname.c
+    SOURCES += $(HDF5_DIR)/H5Gnode.c
+    SOURCES += $(HDF5_DIR)/H5Gobj.c
+    SOURCES += $(HDF5_DIR)/H5Goh.c
+    SOURCES += $(HDF5_DIR)/H5Groot.c
+    SOURCES += $(HDF5_DIR)/H5Gstab.c
+    SOURCES += $(HDF5_DIR)/H5Gtest.c
+    SOURCES += $(HDF5_DIR)/H5Gtraverse.c
+    SOURCES += $(HDF5_DIR)/H5HF.c
+    SOURCES += $(HDF5_DIR)/H5HFbtree2.c
+    SOURCES += $(HDF5_DIR)/H5HFcache.c
+    SOURCES += $(HDF5_DIR)/H5HFdbg.c
+    SOURCES += $(HDF5_DIR)/H5HFdblock.c
+    SOURCES += $(HDF5_DIR)/H5HFdtable.c
+    SOURCES += $(HDF5_DIR)/H5HFhdr.c
+    SOURCES += $(HDF5_DIR)/H5HFhuge.c
+    SOURCES += $(HDF5_DIR)/H5HFiblock.c
+    SOURCES += $(HDF5_DIR)/H5HFiter.c
+    SOURCES += $(HDF5_DIR)/H5HFman.c
+    SOURCES += $(HDF5_DIR)/H5HFsection.c
+    SOURCES += $(HDF5_DIR)/H5HFspace.c
+    SOURCES += $(HDF5_DIR)/H5HFstat.c
+    SOURCES += $(HDF5_DIR)/H5HFtest.c
+    SOURCES += $(HDF5_DIR)/H5HFtiny.c
+    SOURCES += $(HDF5_DIR)/H5HG.c
+    SOURCES += $(HDF5_DIR)/H5HGcache.c
+    SOURCES += $(HDF5_DIR)/H5HGdbg.c
+    SOURCES += $(HDF5_DIR)/H5HGquery.c
+    SOURCES += $(HDF5_DIR)/H5HL.c
+    SOURCES += $(HDF5_DIR)/H5HLcache.c
+    SOURCES += $(HDF5_DIR)/H5HLdbg.c
+    SOURCES += $(HDF5_DIR)/H5HLint.c
+    SOURCES += $(HDF5_DIR)/H5HLprfx.c
+    SOURCES += $(HDF5_DIR)/H5HLdblk.c
+    SOURCES += $(HDF5_DIR)/H5HP.c
+    SOURCES += $(HDF5_DIR)/H5I.c
+    SOURCES += $(HDF5_DIR)/H5Itest.c
+    SOURCES += $(HDF5_DIR)/H5L.c
+    SOURCES += $(HDF5_DIR)/H5Lexternal.c
+    SOURCES += $(HDF5_DIR)/H5MF.c
+    SOURCES += $(HDF5_DIR)/H5MFaggr.c
+    SOURCES += $(HDF5_DIR)/H5MFdbg.c
+    SOURCES += $(HDF5_DIR)/H5MFsection.c
+    SOURCES += $(HDF5_DIR)/H5MM.c
+    SOURCES += $(HDF5_DIR)/H5MP.c
+    SOURCES += $(HDF5_DIR)/H5MPtest.c
+    SOURCES += $(HDF5_DIR)/H5O.c
+    SOURCES += $(HDF5_DIR)/H5Oainfo.c
+    SOURCES += $(HDF5_DIR)/H5Oalloc.c
+    SOURCES += $(HDF5_DIR)/H5Oattr.c
+    SOURCES += $(HDF5_DIR)/H5Oattribute.c
+    SOURCES += $(HDF5_DIR)/H5Obogus.c
+    SOURCES += $(HDF5_DIR)/H5Obtreek.c
+    SOURCES += $(HDF5_DIR)/H5Ocache.c
+    SOURCES += $(HDF5_DIR)/H5Ocache_image.c
+    SOURCES += $(HDF5_DIR)/H5Ochunk.c
+    SOURCES += $(HDF5_DIR)/H5Ocont.c
+    SOURCES += $(HDF5_DIR)/H5Ocopy.c
+    SOURCES += $(HDF5_DIR)/H5Odbg.c
+    SOURCES += $(HDF5_DIR)/H5Odrvinfo.c
+    SOURCES += $(HDF5_DIR)/H5Odtype.c
+    SOURCES += $(HDF5_DIR)/H5Oefl.c
+    SOURCES += $(HDF5_DIR)/H5Ofill.c
+    SOURCES += $(HDF5_DIR)/H5Oflush.c
+    SOURCES += $(HDF5_DIR)/H5Ofsinfo.c
+    SOURCES += $(HDF5_DIR)/H5Oginfo.c
+    SOURCES += $(HDF5_DIR)/H5Olayout.c
+    SOURCES += $(HDF5_DIR)/H5Olinfo.c
+    SOURCES += $(HDF5_DIR)/H5Olink.c
+    SOURCES += $(HDF5_DIR)/H5Omessage.c
+    SOURCES += $(HDF5_DIR)/H5Omtime.c
+    SOURCES += $(HDF5_DIR)/H5Oname.c
+    SOURCES += $(HDF5_DIR)/H5Onull.c
+    SOURCES += $(HDF5_DIR)/H5Opline.c
+    SOURCES += $(HDF5_DIR)/H5Orefcount.c
+    SOURCES += $(HDF5_DIR)/H5Osdspace.c
+    SOURCES += $(HDF5_DIR)/H5Oshared.c
+    SOURCES += $(HDF5_DIR)/H5Oshmesg.c
+    SOURCES += $(HDF5_DIR)/H5Ostab.c
+    SOURCES += $(HDF5_DIR)/H5Otest.c
+    SOURCES += $(HDF5_DIR)/H5Ounknown.c
+    SOURCES += $(HDF5_DIR)/H5P.c
+    SOURCES += $(HDF5_DIR)/H5Pacpl.c
+    SOURCES += $(HDF5_DIR)/H5Pdapl.c
+    SOURCES += $(HDF5_DIR)/H5Pdcpl.c
+    SOURCES += $(HDF5_DIR)/H5Pdeprec.c
+    SOURCES += $(HDF5_DIR)/H5Pdxpl.c
+    SOURCES += $(HDF5_DIR)/H5Pencdec.c
+    SOURCES += $(HDF5_DIR)/H5Pfapl.c
+    SOURCES += $(HDF5_DIR)/H5Pfcpl.c
+    SOURCES += $(HDF5_DIR)/H5Pfmpl.c
+    SOURCES += $(HDF5_DIR)/H5Pgcpl.c
+    SOURCES += $(HDF5_DIR)/H5Pint.c
+    SOURCES += $(HDF5_DIR)/H5Plapl.c
+    SOURCES += $(HDF5_DIR)/H5Plcpl.c
+    SOURCES += $(HDF5_DIR)/H5Pocpl.c
+    SOURCES += $(HDF5_DIR)/H5Pocpypl.c
+    SOURCES += $(HDF5_DIR)/H5Pstrcpl.c
+    SOURCES += $(HDF5_DIR)/H5Ptest.c
+    SOURCES += $(HDF5_DIR)/H5PB.c
+    SOURCES += $(HDF5_DIR)/H5PL.c
+    SOURCES += $(HDF5_DIR)/H5R.c
+    SOURCES += $(HDF5_DIR)/H5Rdeprec.c
+    SOURCES += $(HDF5_DIR)/H5UC.c
+    SOURCES += $(HDF5_DIR)/H5RS.c
+    SOURCES += $(HDF5_DIR)/H5S.c
+    SOURCES += $(HDF5_DIR)/H5Sall.c
+    SOURCES += $(HDF5_DIR)/H5Sdbg.c
+    SOURCES += $(HDF5_DIR)/H5Shyper.c
+    SOURCES += $(HDF5_DIR)/H5Snone.c
+    SOURCES += $(HDF5_DIR)/H5Spoint.c
+    SOURCES += $(HDF5_DIR)/H5Sselect.c
+    SOURCES += $(HDF5_DIR)/H5Stest.c
+    SOURCES += $(HDF5_DIR)/H5SL.c
+    SOURCES += $(HDF5_DIR)/H5SM.c
+    SOURCES += $(HDF5_DIR)/H5SMbtree2.c
+    SOURCES += $(HDF5_DIR)/H5SMcache.c
+    SOURCES += $(HDF5_DIR)/H5SMmessage.c
+    SOURCES += $(HDF5_DIR)/H5SMtest.c
+    SOURCES += $(HDF5_DIR)/H5ST.c
+    SOURCES += $(HDF5_DIR)/H5T.c
+    SOURCES += $(HDF5_DIR)/H5Tarray.c
+    SOURCES += $(HDF5_DIR)/H5Tbit.c
+    SOURCES += $(HDF5_DIR)/H5Tcommit.c
+    SOURCES += $(HDF5_DIR)/H5Tcompound.c
+    SOURCES += $(HDF5_DIR)/H5Tconv.c
+    SOURCES += $(HDF5_DIR)/H5Tcset.c
+    SOURCES += $(HDF5_DIR)/H5Tdbg.c
+    SOURCES += $(HDF5_DIR)/H5Tdeprec.c
+    SOURCES += $(HDF5_DIR)/H5Tenum.c
+    SOURCES += $(HDF5_DIR)/H5Tfields.c
+    SOURCES += $(HDF5_DIR)/H5Tfixed.c
+    SOURCES += $(HDF5_DIR)/H5Tfloat.c
+    SOURCES += $(HDF5_DIR)/H5Tnative.c
+    SOURCES += $(HDF5_DIR)/H5Toffset.c
+    SOURCES += $(HDF5_DIR)/H5Toh.c
+    SOURCES += $(HDF5_DIR)/H5Topaque.c
+    SOURCES += $(HDF5_DIR)/H5Torder.c
+    SOURCES += $(HDF5_DIR)/H5Tpad.c
+    SOURCES += $(HDF5_DIR)/H5Tprecis.c
+    SOURCES += $(HDF5_DIR)/H5Tstrpad.c
+    SOURCES += $(HDF5_DIR)/H5Tvisit.c
+    SOURCES += $(HDF5_DIR)/H5Tvlen.c
+    SOURCES += $(HDF5_DIR)/H5TS.c
+    SOURCES += $(HDF5_DIR)/H5VM.c
+    SOURCES += $(HDF5_DIR)/H5WB.c
+    SOURCES += $(HDF5_DIR)/H5Z.c
+    SOURCES += $(HDF5_DIR)/H5Zdeflate.c
+    SOURCES += $(HDF5_DIR)/H5Zfletcher32.c
+    SOURCES += $(HDF5_DIR)/H5Znbit.c
+    SOURCES += $(HDF5_DIR)/H5Zscaleoffset.c
+    SOURCES += $(HDF5_DIR)/H5Zshuffle.c
+    SOURCES += $(HDF5_DIR)/H5Zszip.c
+    SOURCES += $(HDF5_DIR)/H5Ztrans.c
+
+
+    # H5Tinit.c is architecture specific
+    SOURCES_linux += $(HDF5_DIR)/os/Linux/H5Tinit.c
+
+	#Do not suppor vxWorks at this stage
+	#SOURCES_vxWorks += $(HDF5_DIR)/H5vxWorks.c
+
+    # This file allows printing how the library was configured.
+    # It is not yet correct for each system.
+    SOURCES += $(HDF5_DIR)/H5lib_settings.c
+    
+        
+    ifeq (0, 1)
+    	LIB_SYS_LIBS_WIN32 += ws2_32
+		H5detect_SRCS += H5detect.c
+		PROD_SYS_LIBS_WIN32 += ws2_32
+	endif
+
+	#Add sources from HDF5HL_DIR
+   	SOURCES += $(HDF5HL_DIR)/H5DO.c
+   	SOURCES += $(HDF5HL_DIR)/H5DS.c
+	SOURCES += $(HDF5HL_DIR)/H5IM.c
+   	SOURCES += $(HDF5HL_DIR)/H5LD.c
+   	SOURCES += $(HDF5HL_DIR)/H5LT.c
+   	SOURCES += $(HDF5HL_DIR)/H5LTanalyze.c
+   	SOURCES += $(HDF5HL_DIR)/H5LTparse.c
+   	SOURCES += $(HDF5HL_DIR)/H5PT.c
+   	SOURCES += $(HDF5HL_DIR)/H5TB.c
+
+    #LIB_LIBS += hdf5
+
+	#Do not consider WIN32 compilation at this stage
+    #LIB_SYS_LIBS_WIN32 += ws2_32
+
+  endif # ($(HDF5_EXTERNAL),NO)
+endif # ($(WITH_HDF5),YES)
+
+#############################################################################################
+
+#################################### SZIP ###################################################
+ifeq ($(WITH_SZIP),YES)
+  ifeq ($(SZIP_EXTERNAL),NO)
+
+    #LIBRARY_IOC = szip
+
+    ifeq ($(SHARED_LIBRARIES),YES)
+      USR_CFLAGS_WIN32 += -DSZ_BUILT_AS_DYNAMIC_LIB -Dszip_EXPORTS
+    endif
+
+    HEADERS += $(SZIP_DIR)/SZconfig.h
+    HEADERS += $(SZIP_DIR)/rice.h
+    HEADERS += $(SZIP_DIR)/ricehdf.h
+    HEADERS += $(SZIP_DIR)/szip_adpt.h
+    HEADERS += $(SZIP_DIR)/szlib.h
+    
+    SOURCES += $(wildcard $(SZIP_DIR)/*.c)
+
+#    SOURCES += encoding.c
+#    SOURCES += rice.c
+#    SOURCES += sz_api.c
+
+  endif # ($(SZIP_EXTERNAL),NO)
+endif # ($(WITH_SZIP),YES)
+
+##############################################################################################
+
+#################################### XML2 ###################################################
+
+ifeq ($(XML2_EXTERNAL),NO)
+
+  #LIBRARY = xml2
+
+  #We build all together for the time being
+  #ifeq ($(WITH_ZLIB),YES)
+  #  ifeq ($(ZLIB_EXTERNAL),NO)
+  #    USR_CFLAGS_WIN32 += -DHAVE_ZLIB_H
+  #    LIB_LIBS += zlib
+  #  endif # ($(ZLIB_EXTERNAL),NO)
+  #endif # ($(WITH_ZLIB),YES)
+
+  #Only Linux support
+  #USR_CFLAGS_WIN32 += -DWIN32
+  #ifeq ($(SHARED_LIBRARIES),YES)
+  #  USR_CFLAGS += -DPIC -DNOLIBTOOL
+  #endif
+  #xml2_SYS_LIBS_WIN32 += ws2_32
+
+  # Need _REENTRANT flag on Linux for threads to build correctly
+  USR_CFLAGS_Linux += -D_REENTRANT
+
+  #INC_WIN32 += win32config.h
+  #INC_WIN32 += wsockcompat.h
+  #INC_Darwin += config.h
+  #INC_Linux += config_32.h
+  #INC_Linux += config_64.h
+  HEADERS += config_32.h
+  HEADERS += config_64.h
+  
+  HEADERS += $(XML2_DIR)/os/default/libxml/DOCBparser.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/globals.h 
+  HEADERS += $(XML2_DIR)/os/default/libxml/tree.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/xmlregexp.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/HTMLparser.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/HTMLtree.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/SAX.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/SAX2.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/c14n.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/catalog.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/chvalid.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/debugXML.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/dict.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/encoding.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/entities.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/hash.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/list.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/nanoftp.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/nanohttp.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/parser.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/parserInternals.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/pattern.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/relaxng.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/schemasInternals.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/schematron.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/threads.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/uri.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/valid.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/xinclude.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/xlink.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/xmlIO.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/xmlautomata.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/xmlerror.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/xmlexports.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/xmlmemory.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/xmlreader.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/xmlsave.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/xmlschemas.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/xmlschemastypes.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/xpointer.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/xmlstring.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/xmlunicode.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/xmlversion.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/xmlwriter.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/xpath.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/xpathInternals.h
+  HEADERS += $(XML2_DIR)/os/default/libxml/xmlmodule.h
+
+  SOURCES += $(XML2_DIR)/buf.c
+  SOURCES += $(XML2_DIR)/c14n.c
+  SOURCES += $(XML2_DIR)/catalog.c
+  SOURCES += $(XML2_DIR)/chvalid.c
+  SOURCES += $(XML2_DIR)/debugXML.c
+  SOURCES += $(XML2_DIR)/dict.c
+  SOURCES += $(XML2_DIR)/DOCBparser.c
+  SOURCES += $(XML2_DIR)/encoding.c
+  SOURCES += $(XML2_DIR)/entities.c
+  SOURCES += $(XML2_DIR)/error.c
+  SOURCES += $(XML2_DIR)/globals.c
+  SOURCES += $(XML2_DIR)/hash.c
+  SOURCES += $(XML2_DIR)/HTMLparser.c
+  SOURCES += $(XML2_DIR)/HTMLtree.c
+  SOURCES += $(XML2_DIR)/legacy.c
+  SOURCES += $(XML2_DIR)/list.c
+  # nanoftp and nanohttp won't build on vxWorks.  They are only needed for GraphicsMagick
+  ifneq (vxWorks, $(OS_CLASS))
+    SOURCES += $(XML2_DIR)/nanoftp.c
+    SOURCES += $(XML2_DIR)/nanohttp.c
+  endif
+  SOURCES += $(XML2_DIR)/parser.c
+  SOURCES += $(XML2_DIR)/parserInternals.c
+  SOURCES += $(XML2_DIR)/pattern.c
+  SOURCES += $(XML2_DIR)/relaxng.c
+  SOURCES += $(XML2_DIR)/SAX2.c
+  SOURCES += $(XML2_DIR)/SAX.c
+  SOURCES += $(XML2_DIR)/schematron.c
+  SOURCES += $(XML2_DIR)/threads.c
+  SOURCES += $(XML2_DIR)/tree.c
+  SOURCES += $(XML2_DIR)/uri.c
+  SOURCES += $(XML2_DIR)/valid.c
+  SOURCES += $(XML2_DIR)/xinclude.c
+  SOURCES += $(XML2_DIR)/xlink.c
+  SOURCES += $(XML2_DIR)/xmlIO.c
+  SOURCES += $(XML2_DIR)/xmlmemory.c
+  SOURCES += $(XML2_DIR)/xmlreader.c
+  SOURCES += $(XML2_DIR)/xmlregexp.c
+  SOURCES += $(XML2_DIR)/xmlmodule.c
+  SOURCES += $(XML2_DIR)/xmlsave.c
+  SOURCES += $(XML2_DIR)/xmlschemas.c
+  SOURCES += $(XML2_DIR)/xmlschemastypes.c
+  SOURCES += $(XML2_DIR)/xmlunicode.c
+  SOURCES += $(XML2_DIR)/xmlwriter.c
+  SOURCES += $(XML2_DIR)/xpath.c
+  SOURCES += $(XML2_DIR)/xpointer.c
+  SOURCES += $(XML2_DIR)/xmlstring.c
+
+endif # ($(XML2_EXTERNAL),NO)
+#############################################################################################
+
+######################################### TIFF  #######################################
+ifeq ($(WITH_TIFF),YES)
+  ifeq ($(TIFF_EXTERNAL),NO)
+
+    HEADERS += $(TIFF_DIR)/tiff.h 
+    HEADERS += $(TIFF_DIR)/tiffio.h 
+    HEADERS += $(TIFF_DIR)/tiffvers.h 
+    HEADERS += $(TIFF_DIR)/tiffconf.h 
+    
+    #INC_Linux += tiffconf_32.h
+    #INC_Linux += tiffconf_64.h
+    
+    #It works like this?
+    HEADERS += $(TIFF_DIR)/tiffconf_32.h
+    HEADERS += $(TIFF_DIR)/tiffconf_64.h
+
+    LIBRARY_IOC = tiff
+    ifeq ($(SHARED_LIBRARIES),YES)
+      USR_CFLAGS_WIN32 += -DDLL_TIFF
+      tiff.dll: USR_CFLAGS_WIN32 += -DDLL_EXPORT
+    endif
+
+    #Do not support Windows for the time being
+    #LIB_SYS_LIBS_WIN32 += user32
+
+    SOURCES += $(TIFF_DIR)/tif_aux.c
+    SOURCES += $(TIFF_DIR)/tif_close.c
+    SOURCES += $(TIFF_DIR)/tif_codec.c
+    SOURCES += $(TIFF_DIR)/tif_color.c
+    SOURCES += $(TIFF_DIR)/tif_compress.c
+    SOURCES += $(TIFF_DIR)/tif_dir.c
+    SOURCES += $(TIFF_DIR)/tif_dirinfo.c
+    SOURCES += $(TIFF_DIR)/tif_dirread.c
+    SOURCES += $(TIFF_DIR)/tif_dirwrite.c
+    SOURCES += $(TIFF_DIR)/tif_dumpmode.c
+    SOURCES += $(TIFF_DIR)/tif_error.c
+    SOURCES += $(TIFF_DIR)/tif_extension.c
+    SOURCES += $(TIFF_DIR)/tif_fax3.c
+    SOURCES += $(TIFF_DIR)/tif_fax3sm.c
+    SOURCES += $(TIFF_DIR)/tif_flush.c
+    SOURCES += $(TIFF_DIR)/tif_getimage.c
+    SOURCES += $(TIFF_DIR)/tif_jbig.c
+    SOURCES += $(TIFF_DIR)/tif_jpeg.c
+    SOURCES += $(TIFF_DIR)/tif_jpeg_12.c
+    SOURCES += $(TIFF_DIR)/tif_luv.c
+    SOURCES += $(TIFF_DIR)/tif_lzw.c
+    SOURCES += $(TIFF_DIR)/tif_next.c
+    SOURCES += $(TIFF_DIR)/tif_ojpeg.c
+    SOURCES += $(TIFF_DIR)/tif_open.c
+    SOURCES += $(TIFF_DIR)/tif_packbits.c
+    SOURCES += $(TIFF_DIR)/tif_pixarlog.c
+    SOURCES += $(TIFF_DIR)/tif_predict.c
+    SOURCES += $(TIFF_DIR)/tif_print.c
+    SOURCES += $(TIFF_DIR)/tif_read.c
+    SOURCES += $(TIFF_DIR)/tif_strip.c
+    #SOURCES += $(TIFF_DIR)/tif_stream.cpp
+    SOURCES += $(TIFF_DIR)/tif_swab.c
+    SOURCES += $(TIFF_DIR)/tif_thunder.c
+    SOURCES += $(TIFF_DIR)/tif_tile.c
+    SOURCES += $(TIFF_DIR)/tif_version.c
+    SOURCES += $(TIFF_DIR)/tif_warning.c
+    SOURCES += $(TIFF_DIR)/tif_write.c
+    SOURCES += $(TIFF_DIR)/tif_zip.c
+    
+    #tiff_SRCS_Linux += tif_unix.c
+    SOURCES += $(TIFF_DIR)/tif_unix.c
+    
+    #Only Linux support for the time being
+    ifeq (0, 1)
+    	tiff_SRCS_WIN32 += tif_win32.c
+    	tiff_SRCS_vxWorks += tif_vxWorks.c
+    endif
+
+  endif # ($(TIFF_EXTERNAL),NO)
+endif # ($(WITH_TIFF),YES)
+#############################################################################################
+
 #Configure Makefile for zLib support
 ifeq ($(WITH_ZLIB),YES)
   ifeq ($(ZLIB_EXTERNAL),NO)
 
-    LIBRARY_IOC = zlib
+    #LIBRARY_IOC = zlib
 
     ifeq ($(SHARED_LIBRARIES),YES)
       USR_CFLAGS_WIN32 += -DZLIB_DLL
@@ -62,8 +714,8 @@ ifeq ($(WITH_ZLIB),YES)
     #USR_INCLUDE_DEFAULT = -IsupportApp/zlibSrc/os/default
     #USR_INCLUDE_LINUX   = -IsupportApp/zlibSrc/os/linux
     
-    HEADERS             += zlib.h
-    HEADERS             += zconf.h
+    HEADERS             += $(ZLIB_DIR)/zlib.h
+    HEADERS             += $(ZLIB_DIR)/zconf.h
 
     #SOURCES += adler32.c
     #SOURCES += compress.c
@@ -81,481 +733,134 @@ ifeq ($(WITH_ZLIB),YES)
     #SOURCES += uncompr.c
     #SOURCES += zutil.c
     
-    SOURCES += $(wildcard $(ZLIB_SUPP)/*.c)
+    SOURCES += $(wildcard $(ZLIB_DIR)/*.c)
 
   endif # ($(ZLIB_EXTERNAL),NO)
-  
-#%:
-#	@echo "WITH_ZLIB: ${WITH_ZLIB} -> ZLIB_EXTERNAL: $(ZLIB_EXTERNAL) SOURCES: $(SOURCES)"
 endif # ($(WITH_ZLIB),YES)
 
-ifeq ($(WITH_SZIP),YES)
-  ifeq ($(SZIP_EXTERNAL),NO)
 
-    LIBRARY_IOC = szip
+ifeq ($(WITH_JPEG),YES)
+  ifeq ($(JPEG_EXTERNAL),NO)
+
+  HEADERS += $(JPEG_DIR)/jpeglib.h 
+  HEADERS += $(JPEG_DIR)/jconfig.h 
+  HEADERS += $(JPEG_DIR)/jmorecfg.h 
+  HEADERS += $(JPEG_DIR)/jerror.h 
+
+  #LIBRARY_IOC = jpeg
+  
+  ifeq ($(SHARED_LIBRARIES),YES)
+    USR_CFLAGS_WIN32 += -DDLL_JPEG
+    jpeg.dll: USR_CFLAGS_WIN32 += -DDLL_EXPORT
+  endif
+
+  SOURCES += $(JPEG_DIR)/jaricom.c 
+  SOURCES += $(JPEG_DIR)/jcapimin.c 
+  SOURCES += $(JPEG_DIR)/jcapistd.c 
+  SOURCES += $(JPEG_DIR)/jcarith.c 
+  SOURCES += $(JPEG_DIR)/jccoefct.c 
+  SOURCES += $(JPEG_DIR)/jccolor.c
+  SOURCES += $(JPEG_DIR)/jcdctmgr.c 
+  SOURCES += $(JPEG_DIR)/jchuff.c 
+  SOURCES += $(JPEG_DIR)/jcinit.c 
+  SOURCES += $(JPEG_DIR)/jcmainct.c 
+  SOURCES += $(JPEG_DIR)/jcmarker.c 
+  SOURCES += $(JPEG_DIR)/jcmaster.c
+  SOURCES += $(JPEG_DIR)/jcomapi.c 
+  SOURCES += $(JPEG_DIR)/jcparam.c 
+  SOURCES += $(JPEG_DIR)/jcprepct.c 
+  SOURCES += $(JPEG_DIR)/jcsample.c 
+  SOURCES += $(JPEG_DIR)/jctrans.c 
+  SOURCES += $(JPEG_DIR)/jdapimin.c
+  SOURCES += $(JPEG_DIR)/jdapistd.c 
+  SOURCES += $(JPEG_DIR)/jdarith.c 
+  SOURCES += $(JPEG_DIR)/jdatadst.c 
+  SOURCES += $(JPEG_DIR)/jdatasrc.c 
+  SOURCES += $(JPEG_DIR)/jdcoefct.c 
+  SOURCES += $(JPEG_DIR)/jdcolor.c
+  SOURCES += $(JPEG_DIR)/jddctmgr.c 
+  SOURCES += $(JPEG_DIR)/jdhuff.c 
+  SOURCES += $(JPEG_DIR)/jdinput.c 
+  SOURCES += $(JPEG_DIR)/jdmainct.c 
+  SOURCES += $(JPEG_DIR)/jdmarker.c 
+  SOURCES += $(JPEG_DIR)/jdmaster.c
+  SOURCES += $(JPEG_DIR)/jdmerge.c 
+  SOURCES += $(JPEG_DIR)/jdpostct.c 
+  SOURCES += $(JPEG_DIR)/jdsample.c 
+  SOURCES += $(JPEG_DIR)/jdtrans.c 
+  SOURCES += $(JPEG_DIR)/jerror.c 
+  SOURCES += $(JPEG_DIR)/jfdctflt.c
+  SOURCES += $(JPEG_DIR)/jfdctfst.c 
+  SOURCES += $(JPEG_DIR)/jfdctint.c
+  SOURCES += $(JPEG_DIR)/jidctflt.c 
+  SOURCES += $(JPEG_DIR)/jidctfst.c 
+  SOURCES += $(JPEG_DIR)/jidctint.c 
+  SOURCES += $(JPEG_DIR)/jquant1.c
+  SOURCES += $(JPEG_DIR)/jquant2.c 
+  SOURCES += $(JPEG_DIR)/jutils.c 
+  SOURCES += $(JPEG_DIR)/jmemmgr.c
+  SOURCES += $(JPEG_DIR)/jmemnobs.c
+
+  endif # ($(JPEG_EXTERNAL),NO)
+endif # ($(WITH_JPEG),YES)
+
+ifeq ($(WITH_NETCDF),YES)
+  ifeq ($(NETCDF_EXTERNAL),NO)
+
+    #LIBRARY_IOC = netCDF
+    #NETCDF = $(TOP)/supportApp/netCDFSrc
+    
+    #Why It is not automatically detected as for other supports?
+    USR_INCLUDES += -I../$(NETCDF_DIR)/os/default
+    USR_INCLUDES += -I../$(NETCDF_DIR)/os/Linux
+    USR_CFLAGS += -DHAVE_CONFIG_H
 
     ifeq ($(SHARED_LIBRARIES),YES)
-      USR_CFLAGS_WIN32 += -DSZ_BUILT_AS_DYNAMIC_LIB -Dszip_EXPORTS
+      USR_CFLAGS_WIN32 += -DDLL_NETCDF
+      netCDF.dll: USR_CFLAGS_WIN32 += -DDLL_EXPORT
     endif
 
-    HEADERS += SZconfig.h
-    HEADERS += rice.h
-    HEADERS += ricehdf.h
-    HEADERS += szip_adpt.h
-    HEADERS += szlib.h
-    
-    SOURCES += $(wildcard $(SZIP_SUPP)/*.c)
+    #SRC_DIRS += $(NETCDF)/inc
+    HEADERS += $(NETCDF_DIR)/inc/netcdf.h
 
-#    SOURCES += encoding.c
-#    SOURCES += rice.c
-#    SOURCES += sz_api.c
+    #SRC_DIRS += $(NETCDF)/libsrc
+    SOURCES += $(NETCDF_DIR)/libsrc/attr.c
+    SOURCES += $(NETCDF_DIR)/libsrc/dim.c
+    SOURCES += $(NETCDF_DIR)/libsrc/lookup3.c
+    SOURCES += $(NETCDF_DIR)/libsrc/nc.c
+    SOURCES += $(NETCDF_DIR)/libsrc/nc3dispatch.c
+    SOURCES += $(NETCDF_DIR)/libsrc/nclistmgr.c
+    SOURCES += $(NETCDF_DIR)/libsrc/ncx.c
+    SOURCES += $(NETCDF_DIR)/libsrc/posixio.c
+    SOURCES += $(NETCDF_DIR)/libsrc/putget.c
+    SOURCES += $(NETCDF_DIR)/libsrc/string.c
+    SOURCES += $(NETCDF_DIR)/libsrc/utf8proc.c
+    SOURCES += $(NETCDF_DIR)/libsrc/v1hpg.c
+    SOURCES += $(NETCDF_DIR)/libsrc/var.c
 
-  endif # ($(SZIP_EXTERNAL),NO)
-endif # ($(WITH_SZIP),YES)
+    #SRC_DIRS += $(NETCDF)/libdispatch
+    SOURCES += $(NETCDF_DIR)/libdispatch/att.c
+    SOURCES += $(NETCDF_DIR)/libdispatch/dim1.c
+    SOURCES += $(NETCDF_DIR)/libdispatch/dispatch.c
+    SOURCES += $(NETCDF_DIR)/libdispatch/error.c
+    SOURCES += $(NETCDF_DIR)/libdispatch/file.c
+    SOURCES += $(NETCDF_DIR)/libdispatch/nc_uri.c
+    SOURCES += $(NETCDF_DIR)/libdispatch/var1.c
 
-#Building HD5 Support. This inclueds both hd5Src and hd5_hdlSrc
-ifeq ($(WITH_HDF5),YES)
-  ifeq ($(HDF5_EXTERNAL),NO)
+    #SRC_DIRS += $(NETCDF)/liblib
+    SOURCES += $(NETCDF_DIR)/liblib/stub.c
 
-    #USR_INCLUDES += -I../$(HD5)
-    #USR_INCLUDES += -I../$(HD5_HL)
-    #It seems that this is not needed since in some way there are already added before...
-    #USR_INCLUDES += -I$(where_am_I)/$(HD5)
-    #USR_INCLUDES += -I$(where_am_I)/$(HD5_HL)
+    #PROD_IOC += test_big_classic
+    #PROD_LIBS += netCDF
 
-    USR_CFLAGS += -D NDEBUG
-    
-    #Do not consider WIN32 compilation at this stage
-    SHARED_LIBRARIES = NO
-    ifeq ($(SHARED_LIBRARIES), YES)
-      USR_CFLAGS_WIN32 += -D H5_BUILT_AS_DYNAMIC_LIB 
-      USR_CFLAGS_WIN32 += -D hdf5_hl_shared_EXPORTS
-      ifeq (mingw, $(findstring mingw, $(T_A)))
-        USR_CFLAGS_WIN32 += -D__MSVCRT_VERSION__=0x800
-      else
-        # The thread code on mingw needs work, get compiler errors
-        USR_CFLAGS_WIN32 += -D H5_HAVE_THREADSAFE
-      endif
-    endif
-    
-    #Headers defined for $(HD5)
-    HEADERS += $(HD5)/H5ACpublic.h
-    HEADERS += $(HD5)/H5api_adpt.h
-    HEADERS += $(HD5)/H5Apublic.h
-    HEADERS += $(HD5)/H5B2public.h
-    HEADERS += $(HD5)/H5Bpublic.h
-    HEADERS += $(HD5)/H5Cpublic.h
-    HEADERS += $(HD5)/H5Dpublic.h
-    HEADERS += $(HD5)/H5Epubgen.h
-    HEADERS += $(HD5)/H5Epublic.h
-    HEADERS += $(HD5)/H5FDcore.h
-    HEADERS += $(HD5)/H5FDdirect.h
-    HEADERS += $(HD5)/H5FDfamily.h
-    HEADERS += $(HD5)/H5FDlog.h
-    HEADERS += $(HD5)/H5FDmpi.h
-    HEADERS += $(HD5)/H5FDmpio.h
-    HEADERS += $(HD5)/H5FDmulti.h
-    HEADERS += $(HD5)/H5FDpublic.h
-    HEADERS += $(HD5)/H5FDsec2.h
-    HEADERS += $(HD5)/H5FDstdio.h
-    HEADERS += $(HD5)/H5FDwindows.h
-    HEADERS += $(HD5)/H5FSpublic.h
-    HEADERS += $(HD5)/H5Fpublic.h
-    HEADERS += $(HD5)/H5Gpublic.h
-    HEADERS += $(HD5)/H5HFpublic.h
-    HEADERS += $(HD5)/H5HGpublic.h
-    HEADERS += $(HD5)/H5HLpublic.h
-    HEADERS += $(HD5)/H5Ipublic.h
-    HEADERS += $(HD5)/H5Lpublic.h
-    HEADERS += $(HD5)/H5MMpublic.h
-    HEADERS += $(HD5)/H5Opublic.h
-    HEADERS += $(HD5)/H5overflow.h
-    HEADERS += $(HD5)/H5PLextern.h
-    HEADERS += $(HD5)/H5PLpublic.h
-    HEADERS += $(HD5)/H5Ppublic.h
-    HEADERS += $(HD5)/H5public.h
-    HEADERS += $(HD5)/H5Rpublic.h
-    HEADERS += $(HD5)/H5Spublic.h
-    HEADERS += $(HD5)/H5Tpublic.h
-    HEADERS += $(HD5)/H5version.h
-    HEADERS += $(HD5)/H5Zpublic.h
-    HEADERS += $(HD5)/hdf5.h
-    HEADERS += $(HD5)/H5pubconf.h
-    HEADERS_Linux += $(HD5)/H5pubconf_32.h
-    HEADERS_Linux += $(HD5)/H5pubconf_64.h
-
-
-	#Headers defined for $(HD5_HL)
-    HEADERS += $(HD5_HL)/H5DOpublic.h
-    HEADERS += $(HD5_HL)/H5DSpublic.h
-    HEADERS += $(HD5_HL)/H5IMpublic.h
-    HEADERS += $(HD5_HL)/H5LDpublic.h
-    HEADERS += $(HD5_HL)/H5LTpublic.h
-    HEADERS += $(HD5_HL)/H5PTpublic.h
-    HEADERS += $(HD5_HL)/H5TBpublic.h
-    HEADERS += $(HD5_HL)/hdf5_hl.h
-
-	
-	#Add all sources from HD5_SUPP and HD5_HDL_SUPP
-	#SOURCES += $(wildcard $(HD5)/*.c wildcard $(HD5_HL)/*.c)
-	
-	#Include sorce for HD5
-	SOURCES += $(HD5)/H5.c
-    SOURCES += $(HD5)/H5checksum.c
-    SOURCES += $(HD5)/H5dbg.c
-    SOURCES += $(HD5)/H5system.c
-    SOURCES += $(HD5)/H5timer.c
-    SOURCES += $(HD5)/H5trace.c
-    SOURCES += $(HD5)/H5A.c
-    SOURCES += $(HD5)/H5Abtree2.c
-    SOURCES += $(HD5)/H5Adense.c
-    SOURCES += $(HD5)/H5Adeprec.c
-    SOURCES += $(HD5)/H5Aint.c
-    SOURCES += $(HD5)/H5Atest.c
-    SOURCES += $(HD5)/H5AC.c
-    SOURCES += $(HD5)/H5AClog.c
-    SOURCES += $(HD5)/H5ACdbg.c
-    SOURCES += $(HD5)/H5ACproxy_entry.c
-    SOURCES += $(HD5)/H5B.c
-    SOURCES += $(HD5)/H5Bcache.c
-    SOURCES += $(HD5)/H5Bdbg.c
-    SOURCES += $(HD5)/H5B2.c
-    SOURCES += $(HD5)/H5B2cache.c
-    SOURCES += $(HD5)/H5B2dbg.c
-    SOURCES += $(HD5)/H5B2hdr.c
-    SOURCES += $(HD5)/H5B2int.c
-    SOURCES += $(HD5)/H5B2internal.c
-    SOURCES += $(HD5)/H5B2leaf.c
-    SOURCES += $(HD5)/H5B2stat.c
-    SOURCES += $(HD5)/H5B2test.c
-    SOURCES += $(HD5)/H5C.c
-    SOURCES += $(HD5)/H5Cdbg.c
-    SOURCES += $(HD5)/H5Cepoch.c
-    SOURCES += $(HD5)/H5Cimage.c
-    SOURCES += $(HD5)/H5Clog.c
-    SOURCES += $(HD5)/H5Cprefetched.c
-    SOURCES += $(HD5)/H5Cquery.c
-    SOURCES += $(HD5)/H5Ctag.c
-    SOURCES += $(HD5)/H5Ctest.c
-    SOURCES += $(HD5)/H5CS.c
-    SOURCES += $(HD5)/H5D.c
-    SOURCES += $(HD5)/H5Dbtree.c
-    SOURCES += $(HD5)/H5Dbtree2.c
-    SOURCES += $(HD5)/H5Dchunk.c
-    SOURCES += $(HD5)/H5Dcompact.c
-    SOURCES += $(HD5)/H5Dcontig.c
-    SOURCES += $(HD5)/H5Ddbg.c
-    SOURCES += $(HD5)/H5Ddeprec.c
-    SOURCES += $(HD5)/H5Dearray.c
-    SOURCES += $(HD5)/H5Defl.c
-    SOURCES += $(HD5)/H5Dfarray.c
-    SOURCES += $(HD5)/H5Dfill.c
-    SOURCES += $(HD5)/H5Dint.c
-    SOURCES += $(HD5)/H5Dio.c
-    SOURCES += $(HD5)/H5Dlayout.c
-    SOURCES += $(HD5)/H5Dnone.c
-    SOURCES += $(HD5)/H5Doh.c
-    SOURCES += $(HD5)/H5Dscatgath.c
-    SOURCES += $(HD5)/H5Dselect.c
-    SOURCES += $(HD5)/H5Dsingle.c
-    SOURCES += $(HD5)/H5Dtest.c
-    SOURCES += $(HD5)/H5Dvirtual.c
-    SOURCES += $(HD5)/H5E.c
-    SOURCES += $(HD5)/H5Edeprec.c
-    SOURCES += $(HD5)/H5Eint.c
-    SOURCES += $(HD5)/H5EA.c
-    SOURCES += $(HD5)/H5EAcache.c
-    SOURCES += $(HD5)/H5EAdbg.c
-    SOURCES += $(HD5)/H5EAdblkpage.c
-    SOURCES += $(HD5)/H5EAdblock.c
-    SOURCES += $(HD5)/H5EAhdr.c
-    SOURCES += $(HD5)/H5EAiblock.c
-    SOURCES += $(HD5)/H5EAint.c
-    SOURCES += $(HD5)/H5EAsblock.c
-    SOURCES += $(HD5)/H5EAstat.c
-    SOURCES += $(HD5)/H5EAtest.c
-    SOURCES += $(HD5)/H5F.c
-    SOURCES += $(HD5)/H5Faccum.c
-    SOURCES += $(HD5)/H5Fcwfs.c
-    SOURCES += $(HD5)/H5Fdbg.c
-    SOURCES += $(HD5)/H5Fdeprec.c
-    SOURCES += $(HD5)/H5Fefc.c
-    SOURCES += $(HD5)/H5Ffake.c
-    SOURCES += $(HD5)/H5Fint.c
-    SOURCES += $(HD5)/H5Fio.c
-    SOURCES += $(HD5)/H5Fmount.c
-    SOURCES += $(HD5)/H5Fquery.c
-    SOURCES += $(HD5)/H5Fsfile.c
-    SOURCES += $(HD5)/H5Fspace.c
-    SOURCES += $(HD5)/H5Fsuper.c
-    SOURCES += $(HD5)/H5Fsuper_cache.c
-    SOURCES += $(HD5)/H5Ftest.c
-    SOURCES += $(HD5)/H5FA.c
-    SOURCES += $(HD5)/H5FAcache.c
-    SOURCES += $(HD5)/H5FAdbg.c
-    SOURCES += $(HD5)/H5FAdblock.c
-    SOURCES += $(HD5)/H5FAdblkpage.c
-    SOURCES += $(HD5)/H5FAhdr.c
-    SOURCES += $(HD5)/H5FAint.c
-    SOURCES += $(HD5)/H5FAstat.c
-    SOURCES += $(HD5)/H5FAtest.c
-    SOURCES += $(HD5)/H5FD.c
-    SOURCES += $(HD5)/H5FDcore.c
-    SOURCES += $(HD5)/H5FDfamily.c
-    SOURCES += $(HD5)/H5FDint.c
-    SOURCES += $(HD5)/H5FDlog.c
-    SOURCES += $(HD5)/H5FDmulti.c
-    SOURCES += $(HD5)/H5FDsec2.c
-    SOURCES += $(HD5)/H5FDspace.c
-    SOURCES += $(HD5)/H5FDstdio.c
-    SOURCES += $(HD5)/H5FDtest.c
-    SOURCES += $(HD5)/H5FL.c
-    SOURCES += $(HD5)/H5FO.c
-    SOURCES += $(HD5)/H5FS.c
-    SOURCES += $(HD5)/H5FScache.c
-    SOURCES += $(HD5)/H5FSdbg.c
-    SOURCES += $(HD5)/H5FSint.c
-    SOURCES += $(HD5)/H5FSsection.c
-    SOURCES += $(HD5)/H5FSstat.c
-    SOURCES += $(HD5)/H5FStest.c
-    SOURCES += $(HD5)/H5G.c
-    SOURCES += $(HD5)/H5Gbtree2.c
-    SOURCES += $(HD5)/H5Gcache.c
-    SOURCES += $(HD5)/H5Gcompact.c
-    SOURCES += $(HD5)/H5Gdense.c
-    SOURCES += $(HD5)/H5Gdeprec.c
-    SOURCES += $(HD5)/H5Gent.c
-    SOURCES += $(HD5)/H5Gint.c
-    SOURCES += $(HD5)/H5Glink.c
-    SOURCES += $(HD5)/H5Gloc.c
-    SOURCES += $(HD5)/H5Gname.c
-    SOURCES += $(HD5)/H5Gnode.c
-    SOURCES += $(HD5)/H5Gobj.c
-    SOURCES += $(HD5)/H5Goh.c
-    SOURCES += $(HD5)/H5Groot.c
-    SOURCES += $(HD5)/H5Gstab.c
-    SOURCES += $(HD5)/H5Gtest.c
-    SOURCES += $(HD5)/H5Gtraverse.c
-    SOURCES += $(HD5)/H5HF.c
-    SOURCES += $(HD5)/H5HFbtree2.c
-    SOURCES += $(HD5)/H5HFcache.c
-    SOURCES += $(HD5)/H5HFdbg.c
-    SOURCES += $(HD5)/H5HFdblock.c
-    SOURCES += $(HD5)/H5HFdtable.c
-    SOURCES += $(HD5)/H5HFhdr.c
-    SOURCES += $(HD5)/H5HFhuge.c
-    SOURCES += $(HD5)/H5HFiblock.c
-    SOURCES += $(HD5)/H5HFiter.c
-    SOURCES += $(HD5)/H5HFman.c
-    SOURCES += $(HD5)/H5HFsection.c
-    SOURCES += $(HD5)/H5HFspace.c
-    SOURCES += $(HD5)/H5HFstat.c
-    SOURCES += $(HD5)/H5HFtest.c
-    SOURCES += $(HD5)/H5HFtiny.c
-    SOURCES += $(HD5)/H5HG.c
-    SOURCES += $(HD5)/H5HGcache.c
-    SOURCES += $(HD5)/H5HGdbg.c
-    SOURCES += $(HD5)/H5HGquery.c
-    SOURCES += $(HD5)/H5HL.c
-    SOURCES += $(HD5)/H5HLcache.c
-    SOURCES += $(HD5)/H5HLdbg.c
-    SOURCES += $(HD5)/H5HLint.c
-    SOURCES += $(HD5)/H5HLprfx.c
-    SOURCES += $(HD5)/H5HLdblk.c
-    SOURCES += $(HD5)/H5HP.c
-    SOURCES += $(HD5)/H5I.c
-    SOURCES += $(HD5)/H5Itest.c
-    SOURCES += $(HD5)/H5L.c
-    SOURCES += $(HD5)/H5Lexternal.c
-    SOURCES += $(HD5)/H5MF.c
-    SOURCES += $(HD5)/H5MFaggr.c
-    SOURCES += $(HD5)/H5MFdbg.c
-    SOURCES += $(HD5)/H5MFsection.c
-    SOURCES += $(HD5)/H5MM.c
-    SOURCES += $(HD5)/H5MP.c
-    SOURCES += $(HD5)/H5MPtest.c
-    SOURCES += $(HD5)/H5O.c
-    SOURCES += $(HD5)/H5Oainfo.c
-    SOURCES += $(HD5)/H5Oalloc.c
-    SOURCES += $(HD5)/H5Oattr.c
-    SOURCES += $(HD5)/H5Oattribute.c
-    SOURCES += $(HD5)/H5Obogus.c
-    SOURCES += $(HD5)/H5Obtreek.c
-    SOURCES += $(HD5)/H5Ocache.c
-    SOURCES += $(HD5)/H5Ocache_image.c
-    SOURCES += $(HD5)/H5Ochunk.c
-    SOURCES += $(HD5)/H5Ocont.c
-    SOURCES += $(HD5)/H5Ocopy.c
-    SOURCES += $(HD5)/H5Odbg.c
-    SOURCES += $(HD5)/H5Odrvinfo.c
-    SOURCES += $(HD5)/H5Odtype.c
-    SOURCES += $(HD5)/H5Oefl.c
-    SOURCES += $(HD5)/H5Ofill.c
-    SOURCES += $(HD5)/H5Oflush.c
-    SOURCES += $(HD5)/H5Ofsinfo.c
-    SOURCES += $(HD5)/H5Oginfo.c
-    SOURCES += $(HD5)/H5Olayout.c
-    SOURCES += $(HD5)/H5Olinfo.c
-    SOURCES += $(HD5)/H5Olink.c
-    SOURCES += $(HD5)/H5Omessage.c
-    SOURCES += $(HD5)/H5Omtime.c
-    SOURCES += $(HD5)/H5Oname.c
-    SOURCES += $(HD5)/H5Onull.c
-    SOURCES += $(HD5)/H5Opline.c
-    SOURCES += $(HD5)/H5Orefcount.c
-    SOURCES += $(HD5)/H5Osdspace.c
-    SOURCES += $(HD5)/H5Oshared.c
-    SOURCES += $(HD5)/H5Oshmesg.c
-    SOURCES += $(HD5)/H5Ostab.c
-    SOURCES += $(HD5)/H5Otest.c
-    SOURCES += $(HD5)/H5Ounknown.c
-    SOURCES += $(HD5)/H5P.c
-    SOURCES += $(HD5)/H5Pacpl.c
-    SOURCES += $(HD5)/H5Pdapl.c
-    SOURCES += $(HD5)/H5Pdcpl.c
-    SOURCES += $(HD5)/H5Pdeprec.c
-    SOURCES += $(HD5)/H5Pdxpl.c
-    SOURCES += $(HD5)/H5Pencdec.c
-    SOURCES += $(HD5)/H5Pfapl.c
-    SOURCES += $(HD5)/H5Pfcpl.c
-    SOURCES += $(HD5)/H5Pfmpl.c
-    SOURCES += $(HD5)/H5Pgcpl.c
-    SOURCES += $(HD5)/H5Pint.c
-    SOURCES += $(HD5)/H5Plapl.c
-    SOURCES += $(HD5)/H5Plcpl.c
-    SOURCES += $(HD5)/H5Pocpl.c
-    SOURCES += $(HD5)/H5Pocpypl.c
-    SOURCES += $(HD5)/H5Pstrcpl.c
-    SOURCES += $(HD5)/H5Ptest.c
-    SOURCES += $(HD5)/H5PB.c
-    SOURCES += $(HD5)/H5PL.c
-    SOURCES += $(HD5)/H5R.c
-    SOURCES += $(HD5)/H5Rdeprec.c
-    SOURCES += $(HD5)/H5UC.c
-    SOURCES += $(HD5)/H5RS.c
-    SOURCES += $(HD5)/H5S.c
-    SOURCES += $(HD5)/H5Sall.c
-    SOURCES += $(HD5)/H5Sdbg.c
-    SOURCES += $(HD5)/H5Shyper.c
-    SOURCES += $(HD5)/H5Snone.c
-    SOURCES += $(HD5)/H5Spoint.c
-    SOURCES += $(HD5)/H5Sselect.c
-    SOURCES += $(HD5)/H5Stest.c
-    SOURCES += $(HD5)/H5SL.c
-    SOURCES += $(HD5)/H5SM.c
-    SOURCES += $(HD5)/H5SMbtree2.c
-    SOURCES += $(HD5)/H5SMcache.c
-    SOURCES += $(HD5)/H5SMmessage.c
-    SOURCES += $(HD5)/H5SMtest.c
-    SOURCES += $(HD5)/H5ST.c
-    SOURCES += $(HD5)/H5T.c
-    SOURCES += $(HD5)/H5Tarray.c
-    SOURCES += $(HD5)/H5Tbit.c
-    SOURCES += $(HD5)/H5Tcommit.c
-    SOURCES += $(HD5)/H5Tcompound.c
-    SOURCES += $(HD5)/H5Tconv.c
-    SOURCES += $(HD5)/H5Tcset.c
-    SOURCES += $(HD5)/H5Tdbg.c
-    SOURCES += $(HD5)/H5Tdeprec.c
-    SOURCES += $(HD5)/H5Tenum.c
-    SOURCES += $(HD5)/H5Tfields.c
-    SOURCES += $(HD5)/H5Tfixed.c
-    SOURCES += $(HD5)/H5Tfloat.c
-    SOURCES += $(HD5)/H5Tnative.c
-    SOURCES += $(HD5)/H5Toffset.c
-    SOURCES += $(HD5)/H5Toh.c
-    SOURCES += $(HD5)/H5Topaque.c
-    SOURCES += $(HD5)/H5Torder.c
-    SOURCES += $(HD5)/H5Tpad.c
-    SOURCES += $(HD5)/H5Tprecis.c
-    SOURCES += $(HD5)/H5Tstrpad.c
-    SOURCES += $(HD5)/H5Tvisit.c
-    SOURCES += $(HD5)/H5Tvlen.c
-    SOURCES += $(HD5)/H5TS.c
-    SOURCES += $(HD5)/H5VM.c
-    SOURCES += $(HD5)/H5WB.c
-    SOURCES += $(HD5)/H5Z.c
-    SOURCES += $(HD5)/H5Zdeflate.c
-    SOURCES += $(HD5)/H5Zfletcher32.c
-    SOURCES += $(HD5)/H5Znbit.c
-    SOURCES += $(HD5)/H5Zscaleoffset.c
-    SOURCES += $(HD5)/H5Zshuffle.c
-    SOURCES += $(HD5)/H5Zszip.c
-    SOURCES += $(HD5)/H5Ztrans.c
-
-
-    # H5Tinit.c is architecture specific
-    SOURCES_linux += $(HD5)/os/Linux/H5Tinit.c
-
-	#Do not suppor vxWorks at this stage
-	#SOURCES_vxWorks += $(HD5)/H5vxWorks.c
-
-    # This file allows printing how the library was configured.
-    # It is not yet correct for each system.
-    SOURCES += $(HD5)/H5lib_settings.c
-    
-        
-    ifeq (0, 1)
-    	LIB_SYS_LIBS_WIN32 += ws2_32
-		H5detect_SRCS += H5detect.c
-		PROD_SYS_LIBS_WIN32 += ws2_32
-	endif
-
-	#Add sources from HD5_HL
-   	SOURCES += $(HD5_HL)/H5DO.c
-   	SOURCES += $(HD5_HL)/H5DS.c
-	SOURCES += $(HD5_HL)/H5IM.c
-   	SOURCES += $(HD5_HL)/H5LD.c
-   	SOURCES += $(HD5_HL)/H5LT.c
-   	SOURCES += $(HD5_HL)/H5LTanalyze.c
-   	SOURCES += $(HD5_HL)/H5LTparse.c
-   	SOURCES += $(HD5_HL)/H5PT.c
-   	SOURCES += $(HD5_HL)/H5TB.c
-
-    #LIB_LIBS += hdf5
-
-	#All support libraries have to be built together. We don't support any external library at the moment 
-	ifeq (0, 1)
-    ifeq ($(SZIP_EXTERNAL),YES)
-      ifdef SZIP_INCLUDE
-        USR_INCLUDES += $(SZIP_INCLUDE)
-      endif
-      ifdef SZIP_LIB
-        sz_DIR       = $(SZIP_LIB)
-        LIB_LIBS     += sz
-      else
-        LIB_SYS_LIBS += sz
-      endif
-    else
-      LIB_LIBS += szip
-    endif
-
-    ifeq ($(ZLIB_EXTERNAL),YES)
-      ifdef ZLIB_INCLUDE
-        USR_INCLUDES += $(ZLIB_INCLUDE)
-      endif
-      ifdef ZLIB_LIB
-        z_DIR        = $(ZLIB_LIB)
-        LIB_LIBS     += z
-      else
-        LIB_SYS_LIBS += z
-      endif
-    else
-      LIB_LIBS += zlib
-    endif
-    endif
-
-	#Do not consider WIN32 compilation at this stage
-    #LIB_SYS_LIBS_WIN32 += ws2_32
-
-  endif # ($(HDF5_EXTERNAL),NO)
-endif # ($(WITH_HDF5),YES)
+  endif # ($(NETCDF_EXTERNAL),NO)
+endif # ($(WITH_NETCDF),YES)
 
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>> TO BE ENABLED ONLY FOR TEST!!!!! <<<<<<<<<<<<<<<<<<<<<<<<<<<
 ifeq (0, 1)
 %:
 	@#echo "CURDIR = ${CURDIR}; MODULE = ${MODULE}; MAKEVERSION = ${MAKE} -f ${USERMAKEFILE} LIBVERSION=${LIBVERSION}; DIRS = ${DIRS}"
-	@echo "WITH_HD5: ${WITH_HDF5} -> HD5_EXTERNAL: $(HDF5_EXTERNAL) SRC: $(SOURCES) INCLUDES: $(USR_INCLUDES)"
+	@echo "SRC: $(SOURCES) HEADERS: $(HEADERS)"
 	@echo "I'm in $(where_am_I)"
 endif
 
