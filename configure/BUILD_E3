@@ -110,6 +110,10 @@ env:
 	$(QUIET) echo "----- >>>> ADSupport module config  <<<< -----"
 	$(QUIET) echo "WITH_ZLIB                   : "$(WITH_ZLIB)
 	$(QUIET) echo "ZLIB_EXTERNAL               : "$(ZLIB_EXTERNAL)
+	$(QUIET) echo "WITH_SZIP                   : "$(WITH_SZIP)
+	$(QUIET) echo "SZIP_EXTERNAL               : "$(SZIP_EXTERNAL)
+	$(QUIET) echo "WITH_HD5                    : "$(WITH_HD5)
+	$(QUIET) echo "HD5_EXTERNAL                : "$(HD5_EXTERNAL)
 
 # Copy ADSupport.Makefile into its source path
 conf:
