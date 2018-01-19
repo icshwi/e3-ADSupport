@@ -25,11 +25,15 @@ export WITH_ZLIB     	= YES
 export ZLIB_EXTERNAL 	= NO
 export WITH_HDF5     	= YES
 export HDF5_EXTERNAL 	= NO
-export WITH_JPEG     	= NO
+export WITH_JPEG     	= YES
 export JPEG_EXTERNAL 	= NO
-export WITH_TIFF     	= NO
+export WITH_TIFF     	= YES
 export TIFF_EXTERNAL 	= NO
 
+export WITH_NEXUS       = YES
+export NEXUS_EXTERNAL    = NO
+
 #XML2 Requires only EXTERNAL definition
-export XML2_EXTERNAL 	= YES
+#Including XML2 introduce some conflicts with other module!!
+#export XML2_EXTERNAL 	= YES
 

@@ -40,6 +40,7 @@ SZIP_DIR    = supportApp/szipSrc
 HDF5_DIR    = supportApp/hdf5Src
 HDF5HL_DIR  = supportApp/hdf5_hlSrc
 XML2_DIR	= supportApp/xml2Src
+NEXUS_DIR   = supportApp/nexusSrc
 
 
 #Do not consider WIN32 compilation at this stage
@@ -52,6 +53,115 @@ USR_CFLAGS   += -Wno-unused-but-set-variable
 USR_CPPFLAGS += -Wno-unused-variable
 USR_CPPFLAGS += -Wno-unused-function
 USR_CPPFLAGS += -Wno-unused-but-set-variable
+
+###################################### Build Graphics Magi support ###################################
+# The following is the build order and dependencies
+#
+# 1)  bzlib
+# 2)  lcms
+# 3)  ttf
+# 4)  wmf
+# 5)  webp
+# 6)  jp2
+# 7)  jbig
+# 8)  png      -> bzlib
+# 9)  magick   -> bzlib lcms ttf
+# 10) coders   -> bzlib big jp2 magick png ttf webp wmf
+# 11) filters  -> magick ttf
+# 12) Magick++ -> magick coders
+
+######################################################################################################
+
+###################################### Build Nexus support ###########################################
+ifeq ($(WITH_NEXUS),YES)
+  ifeq ($(NEXUS_EXTERNAL),NO)
+
+    #LIBRARY_IOC += NeXus  
+
+    HEADERS += $(NEXUS_DIR)/napi.h
+    HEADERS += $(NEXUS_DIR)/napiconfig.h
+    HEADERS += $(NEXUS_DIR)/nxconfig.h
+
+    SOURCES += $(NEXUS_DIR)/napi.c
+    SOURCES += $(NEXUS_DIR)/napi5.c
+    SOURCES += $(NEXUS_DIR)/napiu.c
+    SOURCES += $(NEXUS_DIR)/nxdataset.c
+    SOURCES += $(NEXUS_DIR)/nxio.c
+    SOURCES += $(NEXUS_DIR)/nxstack.c
+    SOURCES += $(NEXUS_DIR)/nxxml.c
+    SOURCES += $(NEXUS_DIR)/stptok.c
+
+    USR_CFLAGS += -DHDF5 -D_FILE_OFFSET_BITS=64
+
+    # Travis/ubuntu 12.04 tweak: persuade the hdf5 library build to use API v18 over v16
+    USR_CFLAGS += -DH5_NO_DEPRECATED_SYMBOLS -DH5Gopen_vers=2
+
+    ifeq ($(SHARED_LIBRARIES),YES)
+      USR_CFLAGS_WIN32 += -DDLL_NEXUS
+      USR_CFLAGS_WIN32 += -DH5_BUILT_AS_DYNAMIC_LIB
+      NeXus.dll: USR_CFLAGS_WIN32 += -DDLL_EXPORT
+    endif
+
+	#Everything is built together, no need to include external libraries
+	
+	ifeq (0, 1)
+    ifeq ($(HDF5_STATIC_BUILD), NO)
+      USR_CXXFLAGS_WIN32    += -DH5_BUILT_AS_DYNAMIC_LIB
+      USR_CFLAGS_WIN32      += -DH5_BUILT_AS_DYNAMIC_LIB
+    else
+      USR_CXXFLAGS_WIN32    += -DH5_BUILT_AS_STATIC_LIB
+      USR_CFLAGS_WIN32      += -DH5_BUILT_AS_STATIC_LIB
+    endif
+
+    ifeq ($(HDF5_EXTERNAL),YES)
+      ifdef HDF5_INCLUDE
+        USR_INCLUDES += $(HDF5_INCLUDE)
+      endif
+      ifdef HDF5_LIB
+        hdf5_DIR             = $(HDF5_LIB)
+        LIB_LIBS_default     += hdf5
+      else
+        LIB_SYS_LIBS_default  += hdf5
+        LIB_SYS_LIBS_cygwin32 += libhdf5
+      endif
+    else
+      LIB_LIBS += hdf5
+    endif
+
+    ifeq ($(SZIP_EXTERNAL),YES)
+      ifdef SZIP_INCLUDE
+        USR_INCLUDES += $(SZIP_INCLUDE)
+      endif
+      ifdef SZIP_LIB
+        sz_DIR             = $(SZIP_LIB)
+        LIB_LIBS_default   += sz
+      else
+        LIB_SYS_LIBS_default  += sz
+      endif
+    else
+      LIB_LIBS += szip
+    endif
+
+    ifeq ($(ZLIB_EXTERNAL),YES)
+      ifdef ZLIB_INCLUDE
+        USR_INCLUDES += $(ZLIB_INCLUDE)
+      endif
+      ifdef ZLIB_LIB
+        z_DIR             = $(ZLIB_LIB)
+        LIB_LIBS_default  += z
+      else
+        LIB_SYS_LIBS_default  += z
+        LIB_SYS_LIBS_cygwin32 += libz
+      endif
+    else
+      LIB_LIBS += zlib
+    endif
+    endif #0, 1
+
+
+  endif # ($(NEXUS_EXTERNAL),NO)
+endif # ($(WITH_NEXUS),YES)
+############################################################################################
 
 #################################### HDF5 (and HDF_HL) #####################################
 
@@ -77,6 +187,16 @@ ifeq ($(WITH_HDF5),YES)
         USR_CFLAGS_WIN32 += -D H5_HAVE_THREADSAFE
       endif
     endif
+    
+    #Headers defined for $(HDF5HL_DIR)
+    HEADERS += $(HDF5HL_DIR)/H5DOpublic.h
+    HEADERS += $(HDF5HL_DIR)/H5DSpublic.h
+    HEADERS += $(HDF5HL_DIR)/H5IMpublic.h
+    HEADERS += $(HDF5HL_DIR)/H5LDpublic.h
+    HEADERS += $(HDF5HL_DIR)/H5LTpublic.h
+    HEADERS += $(HDF5HL_DIR)/H5PTpublic.h
+    HEADERS += $(HDF5HL_DIR)/H5TBpublic.h
+    HEADERS += $(HDF5HL_DIR)/hdf5_hl.h
     
     #Headers defined for $(HDF5_DIR)
     HEADERS += $(HDF5_DIR)/H5ACpublic.h
@@ -121,23 +241,21 @@ ifeq ($(WITH_HDF5),YES)
     HEADERS += $(HDF5_DIR)/H5Zpublic.h
     HEADERS += $(HDF5_DIR)/hdf5.h
     HEADERS += $(HDF5_DIR)/H5pubconf.h
-    HEADERS_Linux += $(HDF5_DIR)/H5pubconf_32.h
-    HEADERS_Linux += $(HDF5_DIR)/H5pubconf_64.h
-
-
-	#Headers defined for $(HDF5HL_DIR)
-    HEADERS += $(HDF5HL_DIR)/H5DOpublic.h
-    HEADERS += $(HDF5HL_DIR)/H5DSpublic.h
-    HEADERS += $(HDF5HL_DIR)/H5IMpublic.h
-    HEADERS += $(HDF5HL_DIR)/H5LDpublic.h
-    HEADERS += $(HDF5HL_DIR)/H5LTpublic.h
-    HEADERS += $(HDF5HL_DIR)/H5PTpublic.h
-    HEADERS += $(HDF5HL_DIR)/H5TBpublic.h
-    HEADERS += $(HDF5HL_DIR)/hdf5_hl.h
-
-	
-	#Add all sources from HD5_SUPP and HD5_HDL_SUPP
-	#SOURCES += $(wildcard $(HDF5_DIR)/*.c wildcard $(HDF5HL_DIR)/*.c)
+    #HEADERS_Linux += $(HDF5_DIR)/H5pubconf_32.h
+    #HEADERS_Linux += $(HDF5_DIR)/H5pubconf_64.h
+    HEADERS += $(HDF5_DIR)/H5pubconf_32.h
+    HEADERS += $(HDF5_DIR)/H5pubconf_64.h
+    
+    #Add sources from HDF5HL_DIR first
+   	SOURCES += $(HDF5HL_DIR)/H5DO.c
+   	SOURCES += $(HDF5HL_DIR)/H5DS.c
+	SOURCES += $(HDF5HL_DIR)/H5IM.c
+   	SOURCES += $(HDF5HL_DIR)/H5LD.c
+   	SOURCES += $(HDF5HL_DIR)/H5LT.c
+   	SOURCES += $(HDF5HL_DIR)/H5LTanalyze.c
+   	SOURCES += $(HDF5HL_DIR)/H5LTparse.c
+   	SOURCES += $(HDF5HL_DIR)/H5PT.c
+   	SOURCES += $(HDF5HL_DIR)/H5TB.c
 	
 	#Include sorce for HDF5_DIR
 	SOURCES += $(HDF5_DIR)/H5.c
@@ -440,17 +558,6 @@ ifeq ($(WITH_HDF5),YES)
 		H5detect_SRCS += H5detect.c
 		PROD_SYS_LIBS_WIN32 += ws2_32
 	endif
-
-	#Add sources from HDF5HL_DIR
-   	SOURCES += $(HDF5HL_DIR)/H5DO.c
-   	SOURCES += $(HDF5HL_DIR)/H5DS.c
-	SOURCES += $(HDF5HL_DIR)/H5IM.c
-   	SOURCES += $(HDF5HL_DIR)/H5LD.c
-   	SOURCES += $(HDF5HL_DIR)/H5LT.c
-   	SOURCES += $(HDF5HL_DIR)/H5LTanalyze.c
-   	SOURCES += $(HDF5HL_DIR)/H5LTparse.c
-   	SOURCES += $(HDF5HL_DIR)/H5PT.c
-   	SOURCES += $(HDF5HL_DIR)/H5TB.c
 
     #LIB_LIBS += hdf5
 
