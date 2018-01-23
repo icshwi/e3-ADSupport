@@ -9,3 +9,6 @@ core.*
 .#*
 \#*
 *.log
+.settings
+.cproject
+.project
