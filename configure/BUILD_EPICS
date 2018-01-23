@@ -8,11 +8,11 @@
 
 epics:
 	$(QUIET) echo "EPICS_BASE=$(COMMUNITY_EPICS_BASE)"  > $(TOP)/$(EPICS_MODULE_SRC_PATH)/configure/RELEASE
-	$(QUIET) echo "INSTALL_LOCATION=$(M_IOCSTATS)" > $(TOP)/$(EPICS_MODULE_SRC_PATH)/configure/CONFIG_SITE
-	$(QUIET) #echo "WITH_ZLIB=NO" >> $(TOP)/$(EPICS_MODULE_SRC_PATH)/configure/CONFIG_SITE
-	$(QUIET) #echo "ZLIB_EXTERNAL=NO" >> $(TOP)/$(EPICS_MODULE_SRC_PATH)/configure/CONFIG_SITE
-	$(QUIET) #echo "WITH_HDF5=YES" >> $(TOP)/$(EPICS_MODULE_SRC_PATH)/configure/CONFIG_SITE
-	$(QUIET) #echo "HDF5_EXTERNAL=NO" >> $(TOP)/$(EPICS_MODULE_SRC_PATH)/configure/CONFIG_SITE
+	$(QUIET) echo "INSTALL_LOCATION=$(M_ADSUPPORT)"     > $(TOP)/$(EPICS_MODULE_SRC_PATH)/configure/CONFIG_SITE
+	$(QUIET) #echo "WITH_ZLIB=NO"                      >> $(TOP)/$(EPICS_MODULE_SRC_PATH)/configure/CONFIG_SITE
+	$(QUIET) #echo "ZLIB_EXTERNAL=NO"                  >> $(TOP)/$(EPICS_MODULE_SRC_PATH)/configure/CONFIG_SITE
+	$(QUIET) #echo "WITH_HDF5=YES"                     >> $(TOP)/$(EPICS_MODULE_SRC_PATH)/configure/CONFIG_SITE
+	$(QUIET) #echo "HDF5_EXTERNAL=NO"                  >> $(TOP)/$(EPICS_MODULE_SRC_PATH)/configure/CONFIG_SITE
 	sudo -E bash -c "$(MAKE) -C $(EPICS_MODULE_SRC_PATH)"
 
 epics-clean:
