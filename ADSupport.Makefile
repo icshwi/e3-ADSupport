@@ -36,27 +36,38 @@ OS_DEF   := os/default
 OS_LINUX := os/Linux
 
 # No DEPEND on other DIR
-NETCDF_DIR:=$(APPS)/netCDFSrc
-JPEG_DIR:=$(APPS)/jpegSrc
-ZLIB_DIR:=$(APPS)/zlibSrc
-SZIP_DIR:=$(APPS)/szipSrc
+NETCDF_DIR			:= $(APPS)/netCDFSrc
+JPEG_DIR			:= $(APPS)/jpegSrc
+ZLIB_DIR			:= $(APPS)/zlibSrc
+SZIP_DIR			:= $(APPS)/szipSrc
 
 # DEPEND on zlibSrc
-TIFF_DIR:=$(APPS)/tiffSrc
-XML2_DIR:=$(APPS)/xml2Src
-
+TIFF_DIR			:= $(APPS)/tiffSrc
+XML2_DIR			:= $(APPS)/xml2Src
 
 # DEPEND on zlibSrc sizpSrc
-HDF5_DIR:=$(APPS)/hdf5Src
+HDF5_DIR			:= $(APPS)/hdf5Src
 
 # DEPEND on hdf5Src
-HDF5HL_DIR:=$(APPS)/hdf5_hlSrc
-NEXUS_DIR:=$(APPS)/nexusSrc
+HDF5HL_DIR			:= $(APPS)/hdf5_hlSrc
+NEXUS_DIR			:= $(APPS)/nexusSrc
 
 # DEPEND on tiffSrc zlibSrc xml2Src jpegSrc
-GRAPHICSMAGICK:=$(APPS)/GraphicsMagickSrc
+GRAPHICSMAGICK_DIR 	:= $(APPS)/GraphicsMagickSrc
 
-
+# GRAPHICSMAGICK subprojects
+GM_BZLIB_DIR 	:= $(GRAPHICSMAGICK_DIR)/bzlib
+GM_LCMS_DIR  	:= $(GRAPHICSMAGICK_DIR)/lcms
+GM_TTF_DIR   	:= $(GRAPHICSMAGICK_DIR)/ttf
+GM_WMF_DIR	 	:= $(GRAPHICSMAGICK_DIR)/wmf
+GM_WEBP_DIR	 	:= $(GRAPHICSMAGICK_DIR)/webp
+GM_JBIG_DIR	 	:= $(GRAPHICSMAGICK_DIR)/jbig
+GM_JP2_DIR		:= $(GRAPHICSMAGICK_DIR)/jp2
+GM_PNG_DIR	 	:= $(GRAPHICSMAGICK_DIR)/png
+GM_MAGICK_DIR	:= $(GRAPHICSMAGICK_DIR)/magick
+GM_MAGICK++_DIR	:= $(GRAPHICSMAGICK_DIR)/Magick++
+GM_CODERS_DIR	:= $(GRAPHICSMAGICK_DIR)/coders
+GM_FILTERS_DIR	:= $(GRAPHICSMAGICK_DIR)/filters
 
 USR_CFLAGS   += -Wno-unused-variable
 USR_CFLAGS   += -Wno-unused-function
@@ -68,24 +79,567 @@ USR_CPPFLAGS += -Wno-unused-but-set-variable
 ###################################### Build Graphics Magi support ###################################
 # The following is the build order and dependencies
 #
-# 1)  bzlib
-# 2)  lcms
-# 3)  ttf
-# 4)  wmf
-# 5)  webp
-# 6)  jp2
-# 7)  jbig
-# 8)  png      -> bzlib
-# 9)  magick   -> bzlib lcms ttf
-# 10) coders   -> bzlib big jp2 magick png ttf webp wmf
-# 11) filters  -> magick ttf
-# 12) Magick++ -> magick coders
+# 1)  bzlib												[CONFLICTS -> DISABLED]
+# 2)  lcms												[OK]
+# 3)  ttf												[NOT FULLY INTEGRATED]
+# 4)  wmf												[OK]
+# 5)  webp												[NOT INTEGRATED]
+# 6)  jp2												[NOT INTEGRATED]
+# 7)  jbig												[OK]
+# 8)  png      -> bzlib									[OK]
+# 9)  magick   -> bzlib lcms ttf                        [CONFLICTS -> DISABLED]
+# 10) coders   -> bzlib big jp2 magick png ttf webp wmf [CONFLICTS -> DISABLED]
+# 11) filters  -> magick ttf							[OK]
+# 12) Magick++ -> magick coders							[OK]
+##############################################################################################
+
+ifeq ($(WITH_GRAPHICSMAGICK),YES)
+
+# 12) Magick++
+	
+    ifeq ($(GRAPHICSMAGICK_PREFIX_SYMBOLS),YES)
+      USR_CXXFLAGS += -DPREFIX_MAGICK_SYMBOLS
+    endif
+    
+    USR_INCLUDES += -I$(where_am_I)/$(GRAPHICSMAGICK_DIR)
+    USR_INCLUDES += -I$(where_am_I)/$(GM_LCMS_DIR)/include
+    USR_INCLUDES += -I$(where_am_I)/$(GM_MAGICK++_DIR)/lib
+    
+    HEADERS += $(GM_MAGICK++_DIR)/lib/Magick++.h
+    HEADERS += $(GM_MAGICK++_DIR)/lib/Magick++/Include.h
+    HEADERS += $(GM_MAGICK++_DIR)/lib/Magick++/Image.h
+    HEADERS += $(GM_MAGICK++_DIR)/lib/Magick++/Pixels.h
+    HEADERS += $(GM_MAGICK++_DIR)/lib/Magick++/STL.h
+    HEADERS += $(GM_MAGICK++_DIR)/lib/Magick++/Blob.h
+    HEADERS += $(GM_MAGICK++_DIR)/lib/Magick++/Color.h
+    HEADERS += $(GM_MAGICK++_DIR)/lib/Magick++/Drawable.h
+    HEADERS += $(GM_MAGICK++_DIR)/lib/Magick++/BlobRef.h
+    HEADERS += $(GM_MAGICK++_DIR)/lib/Magick++/CoderInfo.h
+    HEADERS += $(GM_MAGICK++_DIR)/lib/Magick++/Exception.h
+    HEADERS += $(GM_MAGICK++_DIR)/lib/Magick++/Geometry.h
+    HEADERS += $(GM_MAGICK++_DIR)/lib/Magick++/ImageRef.h
+    HEADERS += $(GM_MAGICK++_DIR)/lib/Magick++/Functions.h
+    HEADERS += $(GM_MAGICK++_DIR)/lib/Magick++/Montage.h
+    HEADERS += $(GM_MAGICK++_DIR)/lib/Magick++/Options.h
+    HEADERS += $(GM_MAGICK++_DIR)/lib/Magick++/Thread.h
+    HEADERS += $(GM_MAGICK++_DIR)/lib/Magick++/TypeMetric.h
+    
+    SOURCES += $(GM_MAGICK++_DIR)/lib/Blob.cpp
+    SOURCES += $(GM_MAGICK++_DIR)/lib/BlobRef.cpp
+    SOURCES += $(GM_MAGICK++_DIR)/lib/CoderInfo.cpp
+    SOURCES += $(GM_MAGICK++_DIR)/lib/Color.cpp
+    SOURCES += $(GM_MAGICK++_DIR)/lib/Drawable.cpp
+    SOURCES += $(GM_MAGICK++_DIR)/lib/Exception.cpp
+    SOURCES += $(GM_MAGICK++_DIR)/lib/Functions.cpp
+    SOURCES += $(GM_MAGICK++_DIR)/lib/Geometry.cpp
+    SOURCES += $(GM_MAGICK++_DIR)/lib/Image.cpp
+    SOURCES += $(GM_MAGICK++_DIR)/lib/ImageRef.cpp
+    SOURCES += $(GM_MAGICK++_DIR)/lib/Montage.cpp
+    SOURCES += $(GM_MAGICK++_DIR)/lib/Options.cpp
+    SOURCES += $(GM_MAGICK++_DIR)/lib/Pixels.cpp
+    SOURCES += $(GM_MAGICK++_DIR)/lib/STL.cpp
+    SOURCES += $(GM_MAGICK++_DIR)/lib/Thread.cpp
+    SOURCES += $(GM_MAGICK++_DIR)/lib/TypeMetric.cpp
+    
+    #LIB_LIBS += Magick
+    #LIB_LIBS += coders
+    
+    #LIB_SYS_LIBS_Linux += Xext
+
+# 11) filters
+
+    USR_CFLAGS += -D_MAGICKLIB_
+    
+    ifeq ($(GRAPHICSMAGICK_PREFIX_SYMBOLS),YES)
+      USR_CFLAGS += -DPREFIX_MAGICK_SYMBOLS
+    endif
+    
+    USR_INCLUDES += -I$(where_am_I)/$(GRAPHICSMAGICK_DIR)
+    USR_INCLUDES += -I$(where_am_I)/$(GM_LCMS_DIR)/inc
+    
+    SOURCES += $(GM_FILTERS_DIR)/analyze.c
+
+# 10) coders --> conflicts
+
+ifeq (0,1) 
+
+	USR_CFLAGS += -DHAVE_VSNPRINTF
+    
+    ifeq ($(GRAPHICSMAGICK_PREFIX_SYMBOLS),YES)
+      USR_CFLAGS += -DPREFIX_MAGICK_SYMBOLS
+    endif
+    
+    USR_INCLUDES += -I$(where_am_I)/$(GRAPHICSMAGICK_DIR)
+    USR_INCLUDES += -I$(where_am_I)/$(GM_JBIG_DIR)/libjbig
+    USR_INCLUDES += -I$(where_am_I)/$(GM_JP2_DIR)/src/libjasper/include
+    USR_INCLUDES += -I$(where_am_I)/$(GM_BZLIB_DIR)/bzlib
+    USR_INCLUDES += -I$(where_am_I)/$(GM_PNG_DIR)/png
+    USR_INCLUDES += -I$(where_am_I)/$(GM_WEBP_DIR)/src
+    USR_INCLUDES += -I$(where_am_I)/$(GM_TTF_DIR)/include
+    USR_INCLUDES += -I$(where_am_I)/$(GM_WMF_DIR)/include
+    USR_INCLUDES += -I$(where_am_I)/$(XML2_DIR)/$(OS_DEF)
+    
+    HEADERS += $(GM_CODERS_DIR)/static.h
+    
+    SOURCES += $(GM_CODERS_DIR)/art.c
+    SOURCES += $(GM_CODERS_DIR)/avi.c
+    SOURCES += $(GM_CODERS_DIR)/avs.c
+    SOURCES += $(GM_CODERS_DIR)/bmp.c
+    SOURCES += $(GM_CODERS_DIR)/cals.c
+    SOURCES += $(GM_CODERS_DIR)/caption.c
+    SOURCES += $(GM_CODERS_DIR)/cineon.c
+    SOURCES += $(GM_CODERS_DIR)/clipboard.c
+    SOURCES += $(GM_CODERS_DIR)/cmyk.c
+    SOURCES += $(GM_CODERS_DIR)/cut.c
+    SOURCES += $(GM_CODERS_DIR)/dcm.c
+    SOURCES += $(GM_CODERS_DIR)/dcraw.c
+    SOURCES += $(GM_CODERS_DIR)/dib.c
+    SOURCES += $(GM_CODERS_DIR)/dps.c
+    SOURCES += $(GM_CODERS_DIR)/dpx.c
+    SOURCES += $(GM_CODERS_DIR)/emf.c
+    SOURCES += $(GM_CODERS_DIR)/ept.c
+    SOURCES += $(GM_CODERS_DIR)/fax.c
+    SOURCES += $(GM_CODERS_DIR)/fits.c
+    SOURCES += $(GM_CODERS_DIR)/fpx.c
+    SOURCES += $(GM_CODERS_DIR)/gif.c
+    SOURCES += $(GM_CODERS_DIR)/gradient.c
+    SOURCES += $(GM_CODERS_DIR)/gray.c
+    SOURCES += $(GM_CODERS_DIR)/hdf.c
+    SOURCES += $(GM_CODERS_DIR)/histogram.c
+    SOURCES += $(GM_CODERS_DIR)/hrz.c
+    SOURCES += $(GM_CODERS_DIR)/html.c
+    SOURCES += $(GM_CODERS_DIR)/icon.c
+    SOURCES += $(GM_CODERS_DIR)/identity.c
+    SOURCES += $(GM_CODERS_DIR)/info.c
+    SOURCES += $(GM_CODERS_DIR)/jbig.c
+    SOURCES += $(GM_CODERS_DIR)/jnx.c
+    SOURCES += $(GM_CODERS_DIR)/jp2.c
+    SOURCES += $(GM_CODERS_DIR)/jpeg.c
+    SOURCES += $(GM_CODERS_DIR)/label.c
+    SOURCES += $(GM_CODERS_DIR)/locale.c
+    SOURCES += $(GM_CODERS_DIR)/logo.c
+    SOURCES += $(GM_CODERS_DIR)/mac.c
+    SOURCES += $(GM_CODERS_DIR)/map.c
+    SOURCES += $(GM_CODERS_DIR)/mat.c
+    SOURCES += $(GM_CODERS_DIR)/matte.c
+    SOURCES += $(GM_CODERS_DIR)/meta.c
+    SOURCES += $(GM_CODERS_DIR)/miff.c
+    SOURCES += $(GM_CODERS_DIR)/mono.c
+    SOURCES += $(GM_CODERS_DIR)/mpc.c
+    SOURCES += $(GM_CODERS_DIR)/mpeg.c
+    SOURCES += $(GM_CODERS_DIR)/mpr.c
+    SOURCES += $(GM_CODERS_DIR)/msl.c
+    SOURCES += $(GM_CODERS_DIR)/mtv.c
+    SOURCES += $(GM_CODERS_DIR)/mvg.c
+    SOURCES += $(GM_CODERS_DIR)/null.c
+    SOURCES += $(GM_CODERS_DIR)/otb.c
+    SOURCES += $(GM_CODERS_DIR)/palm.c
+    SOURCES += $(GM_CODERS_DIR)/pcd.c
+    SOURCES += $(GM_CODERS_DIR)/pcl.c
+    SOURCES += $(GM_CODERS_DIR)/pcx.c
+    SOURCES += $(GM_CODERS_DIR)/pdb.c
+    SOURCES += $(GM_CODERS_DIR)/pdf.c
+    SOURCES += $(GM_CODERS_DIR)/pict.c
+    SOURCES += $(GM_CODERS_DIR)/pix.c
+    SOURCES += $(GM_CODERS_DIR)/plasma.c
+    SOURCES += $(GM_CODERS_DIR)/png.c
+    SOURCES += $(GM_CODERS_DIR)/pnm.c
+    SOURCES += $(GM_CODERS_DIR)/preview.c
+    SOURCES += $(GM_CODERS_DIR)/ps.c
+    SOURCES += $(GM_CODERS_DIR)/ps2.c
+    SOURCES += $(GM_CODERS_DIR)/ps3.c
+    SOURCES += $(GM_CODERS_DIR)/psd.c
+    SOURCES += $(GM_CODERS_DIR)/pwp.c
+    SOURCES += $(GM_CODERS_DIR)/rgb.c
+    SOURCES += $(GM_CODERS_DIR)/rla.c
+    SOURCES += $(GM_CODERS_DIR)/rle.c
+    SOURCES += $(GM_CODERS_DIR)/sct.c
+    SOURCES += $(GM_CODERS_DIR)/sfw.c
+    SOURCES += $(GM_CODERS_DIR)/sgi.c
+    SOURCES += $(GM_CODERS_DIR)/stegano.c
+    SOURCES += $(GM_CODERS_DIR)/sun.c
+    SOURCES += $(GM_CODERS_DIR)/svg.c
+    SOURCES += $(GM_CODERS_DIR)/tga.c
+    SOURCES += $(GM_CODERS_DIR)/tiff.c
+    SOURCES += $(GM_CODERS_DIR)/tile.c
+    SOURCES += $(GM_CODERS_DIR)/tim.c
+    SOURCES += $(GM_CODERS_DIR)/topol.c
+    SOURCES += $(GM_CODERS_DIR)/ttf.c
+    SOURCES += $(GM_CODERS_DIR)/txt.c
+    SOURCES += $(GM_CODERS_DIR)/uil.c
+    SOURCES += $(GM_CODERS_DIR)/url.c
+    SOURCES += $(GM_CODERS_DIR)/uyvy.c
+    SOURCES += $(GM_CODERS_DIR)/vicar.c
+    SOURCES += $(GM_CODERS_DIR)/vid.c
+    SOURCES += $(GM_CODERS_DIR)/viff.c
+    SOURCES += $(GM_CODERS_DIR)/wbmp.c
+    SOURCES += $(GM_CODERS_DIR)/webp.c
+    SOURCES += $(GM_CODERS_DIR)/wmf.c
+    SOURCES += $(GM_CODERS_DIR)/wpg.c
+    SOURCES += $(GM_CODERS_DIR)/x.c
+    SOURCES += $(GM_CODERS_DIR)/xbm.c
+    SOURCES += $(GM_CODERS_DIR)/xc.c
+    SOURCES += $(GM_CODERS_DIR)/xcf.c
+    SOURCES += $(GM_CODERS_DIR)/xpm.c
+    SOURCES += $(GM_CODERS_DIR)/xtrn.c
+    SOURCES += $(GM_CODERS_DIR)/xwd.c
+    SOURCES += $(GM_CODERS_DIR)/yuv.c
+    SOURCES += $(GM_CODERS_DIR)/static.c
+    
+    #LIB_LIBS += bzlib jbig jp2 Magick png ttf webp wmf jpeg zlib tiff
+    #ifeq ($(XML2_EXTERNAL), NO)
+    #  LIB_LIBS += xml2
+    #else
+    #  USR_INCLUDES += -I$(XML2_INCLUDE)
+    #  ifdef XML2_LIB
+    #    xml2_DIR     = $(XML2_LIB)
+    #    LIB_LIBS     += xml2
+    #  else
+    #    LIB_SYS_LIBS += xml2
+    #  endif
+    #endif
+endif
+
+# 9) magick -> UNABLE TO BUILD IT PROPERLY NAME CONFLICTS
+
+ifeq (0, 1)
+	USR_INCLUDES += -I$(where_am_I)/$(GRAPHICSMAGICK_DIR)
+    USR_INCLUDES += -I$(where_am_I)/$(GM_LCMS_DIR)/include
+    USR_INCLUDES += -I$(where_am_I)/$(GM_TTF_DIR)/include
+    
+    USR_CFLAGS += -D_MAGICKLIB_
+    USR_CFLAGS += -DHAVE_VSNPRINTF
+    
+    ifeq ($(GRAPHICSMAGICK_PREFIX_SYMBOLS),YES)
+      USR_CFLAGS += -DPREFIX_MAGICK_SYMBOLS
+    endif
+    
+    # Here overriding the default header file install location.
+    # This allows Magick++ headers files (at $(INSTALL_LOCATION)/include/Magick++) to
+    # include magick header files at relative path e.g. "magick/magick_config.h
+    INSTALL_INCLUDE           = $(INSTALL_LOCATION)/include/magick
+    HEADERS += $(GM_MAGICK_DIR)/magick_config.h
+    #HEADERS += $(GM_MAGICK_DIR)/magick_config_Win32.h
+    HEADERS += $(GM_MAGICK_DIR)/magick_config_Linux.h
+    HEADERS += $(GM_MAGICK_DIR)/api.h
+    HEADERS += $(GM_MAGICK_DIR)/enum_strings.h
+    HEADERS += $(GM_MAGICK_DIR)/common.h
+    HEADERS += $(GM_MAGICK_DIR)/magick_types.h
+    HEADERS += $(GM_MAGICK_DIR)/analyze.h
+    HEADERS += $(GM_MAGICK_DIR)/image.h
+    HEADERS += $(GM_MAGICK_DIR)/forward.h
+    HEADERS += $(GM_MAGICK_DIR)/colorspace.h
+    HEADERS += $(GM_MAGICK_DIR)/error.h
+    HEADERS += $(GM_MAGICK_DIR)/log.h
+    HEADERS += $(GM_MAGICK_DIR)/timer.h
+    HEADERS += $(GM_MAGICK_DIR)/attribute.h
+    HEADERS += $(GM_MAGICK_DIR)/average.h
+    HEADERS += $(GM_MAGICK_DIR)/blob.h
+    HEADERS += $(GM_MAGICK_DIR)/cdl.h
+    HEADERS += $(GM_MAGICK_DIR)/channel.h
+    HEADERS += $(GM_MAGICK_DIR)/color.h
+    HEADERS += $(GM_MAGICK_DIR)/color_lookup.h
+    HEADERS += $(GM_MAGICK_DIR)/colormap.h
+    HEADERS += $(GM_MAGICK_DIR)/command.h
+    HEADERS += $(GM_MAGICK_DIR)/compare.h
+    HEADERS += $(GM_MAGICK_DIR)/composite.h
+    HEADERS += $(GM_MAGICK_DIR)/compress.h
+    HEADERS += $(GM_MAGICK_DIR)/confirm_access.h
+    HEADERS += $(GM_MAGICK_DIR)/constitute.h
+    HEADERS += $(GM_MAGICK_DIR)/decorate.h
+    HEADERS += $(GM_MAGICK_DIR)/delegate.h
+    HEADERS += $(GM_MAGICK_DIR)/deprecate.h
+    HEADERS += $(GM_MAGICK_DIR)/describe.h
+    HEADERS += $(GM_MAGICK_DIR)/draw.h
+    HEADERS += $(GM_MAGICK_DIR)/effect.h
+    HEADERS += $(GM_MAGICK_DIR)/enhance.h
+    HEADERS += $(GM_MAGICK_DIR)/error.h
+    HEADERS += $(GM_MAGICK_DIR)/fx.h
+    HEADERS += $(GM_MAGICK_DIR)/gem.h
+    HEADERS += $(GM_MAGICK_DIR)/gradient.h
+    HEADERS += $(GM_MAGICK_DIR)/hclut.h
+    HEADERS += $(GM_MAGICK_DIR)/image.h
+    HEADERS += $(GM_MAGICK_DIR)/list.h
+    HEADERS += $(GM_MAGICK_DIR)/log.h
+    HEADERS += $(GM_MAGICK_DIR)/magic.h
+    HEADERS += $(GM_MAGICK_DIR)/magick.h
+    HEADERS += $(GM_MAGICK_DIR)/memory.h
+    HEADERS += $(GM_MAGICK_DIR)/module.h
+    HEADERS += $(GM_MAGICK_DIR)/monitor.h
+    HEADERS += $(GM_MAGICK_DIR)/montage.h
+    HEADERS += $(GM_MAGICK_DIR)/operator.h
+    HEADERS += $(GM_MAGICK_DIR)/paint.h
+    HEADERS += $(GM_MAGICK_DIR)/pixel_cache.h
+    HEADERS += $(GM_MAGICK_DIR)/pixel_iterator.h
+    HEADERS += $(GM_MAGICK_DIR)/plasma.h
+    HEADERS += $(GM_MAGICK_DIR)/profile.h
+    HEADERS += $(GM_MAGICK_DIR)/random.h
+    HEADERS += $(GM_MAGICK_DIR)/quantize.h
+    HEADERS += $(GM_MAGICK_DIR)/registry.h
+    HEADERS += $(GM_MAGICK_DIR)/render.h
+    HEADERS += $(GM_MAGICK_DIR)/resize.h
+    HEADERS += $(GM_MAGICK_DIR)/resource.h
+    HEADERS += $(GM_MAGICK_DIR)/shear.h
+    HEADERS += $(GM_MAGICK_DIR)/signature.h
+    HEADERS += $(GM_MAGICK_DIR)/statistics.h
+    HEADERS += $(GM_MAGICK_DIR)/symbols.h
+    HEADERS += $(GM_MAGICK_DIR)/texture.h
+    HEADERS += $(GM_MAGICK_DIR)/timer.h
+    HEADERS += $(GM_MAGICK_DIR)/transform.h
+    HEADERS += $(GM_MAGICK_DIR)/type.h
+    HEADERS += $(GM_MAGICK_DIR)/utility.h
+    HEADERS += $(GM_MAGICK_DIR)/version.h
+    
+    
+    #LIB_SRCS_DEFAULT += analyze_Linux.c
+    #LIB_SRCS_WIN32 += analyze_Win32.c
+    
+    SOURCES += $(GM_MAGICK_DIR)/animate.c
+    SOURCES += $(GM_MAGICK_DIR)/annotate.c
+    SOURCES += $(GM_MAGICK_DIR)/attribute.c
+    SOURCES += $(GM_MAGICK_DIR)/average.c
+    SOURCES += $(GM_MAGICK_DIR)/bit_stream.c
+    SOURCES += $(GM_MAGICK_DIR)/blob.c
+    SOURCES += $(GM_MAGICK_DIR)/cdl.c
+    SOURCES += $(GM_MAGICK_DIR)/channel.c
+    SOURCES += $(GM_MAGICK_DIR)/color.c
+    SOURCES += $(GM_MAGICK_DIR)/colormap.c
+    SOURCES += $(GM_MAGICK_DIR)/colorspace.c
+    SOURCES += $(GM_MAGICK_DIR)/color_lookup.c
+    SOURCES += $(GM_MAGICK_DIR)/command.c
+    SOURCES += $(GM_MAGICK_DIR)/compare.c
+    SOURCES += $(GM_MAGICK_DIR)/composite.c
+    SOURCES += $(GM_MAGICK_DIR)/compress.c
+    SOURCES += $(GM_MAGICK_DIR)/confirm_access.c
+    SOURCES += $(GM_MAGICK_DIR)/constitute.c
+    SOURCES += $(GM_MAGICK_DIR)/decorate.c
+    SOURCES += $(GM_MAGICK_DIR)/delegate.c
+    SOURCES += $(GM_MAGICK_DIR)/deprecate.c
+    SOURCES += $(GM_MAGICK_DIR)/describe.c
+    SOURCES += $(GM_MAGICK_DIR)/display.c
+    SOURCES += $(GM_MAGICK_DIR)/draw.c
+    SOURCES += $(GM_MAGICK_DIR)/effect.c
+    SOURCES += $(GM_MAGICK_DIR)/enhance.c
+    SOURCES += $(GM_MAGICK_DIR)/enum_strings.c
+    SOURCES += $(GM_MAGICK_DIR)/error.c
+    SOURCES += $(GM_MAGICK_DIR)/export.c
+    SOURCES += $(GM_MAGICK_DIR)/floats.c
+    SOURCES += $(GM_MAGICK_DIR)/fx.c
+    SOURCES += $(GM_MAGICK_DIR)/gem.c
+    SOURCES += $(GM_MAGICK_DIR)/gradient.c
+    SOURCES += $(GM_MAGICK_DIR)/hclut.c
+    SOURCES += $(GM_MAGICK_DIR)/image.c
+    SOURCES += $(GM_MAGICK_DIR)/import.c
+    SOURCES += $(GM_MAGICK_DIR)/list.c
+    SOURCES += $(GM_MAGICK_DIR)/locale.c
+    SOURCES += $(GM_MAGICK_DIR)/log.c
+    SOURCES += $(GM_MAGICK_DIR)/magic.c
+    SOURCES += $(GM_MAGICK_DIR)/magick.c
+    SOURCES += $(GM_MAGICK_DIR)/magick_endian.c
+    SOURCES += $(GM_MAGICK_DIR)/map.c
+    SOURCES += $(GM_MAGICK_DIR)/memory.c
+    SOURCES += $(GM_MAGICK_DIR)/module.c
+    SOURCES += $(GM_MAGICK_DIR)/monitor.c
+    SOURCES += $(GM_MAGICK_DIR)/montage.c
+    SOURCES += $(GM_MAGICK_DIR)/nt_base.c
+    SOURCES += $(GM_MAGICK_DIR)/nt_feature.c
+    SOURCES += $(GM_MAGICK_DIR)/omp_data_view.c
+    SOURCES += $(GM_MAGICK_DIR)/operator.c
+    SOURCES += $(GM_MAGICK_DIR)/paint.c
+    SOURCES += $(GM_MAGICK_DIR)/pixel_cache.c
+    SOURCES += $(GM_MAGICK_DIR)/pixel_iterator.c
+    SOURCES += $(GM_MAGICK_DIR)/plasma.c
+    SOURCES += $(GM_MAGICK_DIR)/PreRvIcccm.c
+    SOURCES += $(GM_MAGICK_DIR)/profile.c
+    SOURCES += $(GM_MAGICK_DIR)/quantize.c
+    SOURCES += $(GM_MAGICK_DIR)/random.c
+    SOURCES += $(GM_MAGICK_DIR)/registry.c
+    SOURCES += $(GM_MAGICK_DIR)/render.c
+    SOURCES += $(GM_MAGICK_DIR)/resize.c
+    SOURCES += $(GM_MAGICK_DIR)/resource.c
+    SOURCES += $(GM_MAGICK_DIR)/segment.c
+    SOURCES += $(GM_MAGICK_DIR)/semaphore.c
+    SOURCES += $(GM_MAGICK_DIR)/shear.c
+    SOURCES += $(GM_MAGICK_DIR)/signature.c
+    SOURCES += $(GM_MAGICK_DIR)/statistics.c
+    SOURCES += $(GM_MAGICK_DIR)/tempfile.c
+    SOURCES += $(GM_MAGICK_DIR)/texture.c
+    SOURCES += $(GM_MAGICK_DIR)/timer.c
+    SOURCES += $(GM_MAGICK_DIR)/transform.c
+    SOURCES += $(GM_MAGICK_DIR)/tsd.c
+    SOURCES += $(GM_MAGICK_DIR)/type.c
+    SOURCES += $(GM_MAGICK_DIR)/unix_port.c
+    SOURCES += $(GM_MAGICK_DIR)/utility.c
+    SOURCES += $(GM_MAGICK_DIR)/version.c
+    SOURCES += $(GM_MAGICK_DIR)/widget.c
+    SOURCES += $(GM_MAGICK_DIR)/xwindow.c
+endif #eq(0, 1)
+
+# 8) png
+
+	USR_CFLAGS += -D_PNGLIB_
+    USR_CFLAGS += -DPNG_NO_MODULEDEF
+    USR_CFLAGS += -D__FLAT__
+    
+    SOURCES += $(GM_PNG_DIR)/png.c
+    SOURCES += $(GM_PNG_DIR)/pngerror.c
+    SOURCES += $(GM_PNG_DIR)/pngget.c
+    SOURCES += $(GM_PNG_DIR)/pngmem.c
+    SOURCES += $(GM_PNG_DIR)/pngpread.c
+    SOURCES += $(GM_PNG_DIR)/pngrio.c
+    SOURCES += $(GM_PNG_DIR)/pngrtran.c
+    SOURCES += $(GM_PNG_DIR)/pngrutil.c
+    SOURCES += $(GM_PNG_DIR)/pngset.c
+    SOURCES += $(GM_PNG_DIR)/pngtrans.c
+    SOURCES += $(GM_PNG_DIR)/pngwio.c
+    SOURCES += $(GM_PNG_DIR)/pngwrite.c
+    SOURCES += $(GM_PNG_DIR)/pngwtran.c
+    SOURCES += $(GM_PNG_DIR)/pngwutil.c
+    SOURCES += $(GM_PNG_DIR)/pngread.c
+    
+    #LIB_RCS  += png.rc
+
+# 7) jbig
+
+    USR_INCLUDES += -I$(where_am_I)/$(GRAPHICSMAGICK_DIR)
+    
+    SOURCES += $(GM_JBIG_DIR)/libjbig/jbig.c
+    SOURCES += $(GM_JBIG_DIR)/libjbig/jbig_tab.c
+    
+    #How to manage RC file?
+    #LIB_RCS +=  $(GM_JBIG_DIR)/jbig.rc
+
+# 6) jp2
+
+# 5) webp
+
+# 4) wmf
+	USR_CFLAGS       += -DHAVE_CONFIG_H
+	USR_CFLAGS       += -D_EXPORT
+    
+	USR_INCLUDES += -I$(where_am_I)/$(GRAPHICSMAGICK_DIR)
+	USR_INCLUDES += -I$(where_am_I)/$(GM_WMF_DIR)
+	USR_INCLUDES += -I$(where_am_I)/$(GM_WMF_DIR)/include
+	USR_INCLUDES += -I$(where_am_I)/$(GM_TTF_DIR)/include
+    
+	SOURCES += $(GM_WMF_DIR)/src/api.c
+	SOURCES += $(GM_WMF_DIR)/src/bbuf.c
+	SOURCES += $(GM_WMF_DIR)/src/meta.c
+	SOURCES += $(GM_WMF_DIR)/src/player.c
+	SOURCES += $(GM_WMF_DIR)/src/recorder.c
+	
+	
+    
+# Build 3) ttf -----------> OMG!!!!!!!!!!!!!!!
+	ifeq (0, 1)
+		USR_INCLUDES += -I$(where_am_I)/$(GM_TTF_DIR)/include
+		USR_INCLUDES += -I$(where_am_I)/$(GM_TTF_DIR)/include/freetype/
+		USR_INCLUDES += -I$(where_am_I)/$(GM_TTF_DIR)/include/freetype/config/
+		USR_INCLUDES += -I$(where_am_I)/$(GM_TTF_DIR)/include/freetype/internal/
+		USR_INCLUDES += -I$(where_am_I)/$(GM_TTF_DIR)/include/freetype/internal/services
+	
+		HEADERS += $(GRAPHICSMAGICK_DIR)/ttf/include/ft2build.h
+		HEADERS += $(GRAPHICSMAGICK_DIR)/ttf/include/freetype/config/ftheader.h
+		HEADERS += $(GRAPHICSMAGICK_DIR)/ttf/include/freetype/config/ftconfig.h
+		HEADERS += $(GRAPHICSMAGICK_DIR)/ttf/include/freetype/config/ftoption.h
+		HEADERS += $(GRAPHICSMAGICK_DIR)/ttf/include/freetype/config/ftstdlib.h
+		HEADERS += $(GRAPHICSMAGICK_DIR)/ttf/include/freetype/freetype.h
+		HEADERS += $(GRAPHICSMAGICK_DIR)/ttf/include/freetype/fttypes.h
+		HEADERS += $(GRAPHICSMAGICK_DIR)/ttf/include/freetype/ftsystem.h
+		HEADERS += $(GRAPHICSMAGICK_DIR)/ttf/include/freetype/ftimage.h
+		HEADERS += $(GRAPHICSMAGICK_DIR)/ttf/include/freetype/fterrors.h
+		HEADERS += $(GRAPHICSMAGICK_DIR)/ttf/include/freetype/ftmoderr.h
+		HEADERS += $(GRAPHICSMAGICK_DIR)/ttf/include/freetype/fterrdef.h
+		HEADERS += $(GRAPHICSMAGICK_DIR)/ttf/include/freetype/ftglyph.h
+		HEADERS += $(GRAPHICSMAGICK_DIR)/ttf/include/freetype/ftoutln.h
+		HEADERS += $(GRAPHICSMAGICK_DIR)/ttf/include/freetype/ftbbox.h
+
+		SOURCES += $(GM_TTF_DIR)/src/autofit/autofit.c
+	
+		SOURCES += $(GM_TTF_DIR)/src/base/ftbase.c
+		SOURCES += $(GM_TTF_DIR)/src/base/ftbbox.c
+		SOURCES += $(GM_TTF_DIR)/src/base/ftbitmap.c
+		SOURCES += $(GM_TTF_DIR)/src/base/ftfntfmt.c
+		SOURCES += $(GM_TTF_DIR)/src/base/ftfstype.c
+		SOURCES += $(GM_TTF_DIR)/src/base/ftgasp.c
+		SOURCES += $(GM_TTF_DIR)/src/base/ftglyph.c
+		SOURCES += $(GM_TTF_DIR)/src/base/ftgxval.c
+		SOURCES += $(GM_TTF_DIR)/src/base/ftinit.c
+		SOURCES += $(GM_TTF_DIR)/src/base/ftlcdfil.c
+		SOURCES += $(GM_TTF_DIR)/src/base/ftmm.c
+		SOURCES += $(GM_TTF_DIR)/src/base/ftotval.c
+		SOURCES += $(GM_TTF_DIR)/src/base/ftpatent.c
+		SOURCES += $(GM_TTF_DIR)/src/base/ftpfr.c
+		SOURCES += $(GM_TTF_DIR)/src/base/ftstroke.c
+		SOURCES += $(GM_TTF_DIR)/src/base/ftsynth.c
+		SOURCES += $(GM_TTF_DIR)/src/base/ftsystem.c
+		SOURCES += $(GM_TTF_DIR)/src/base/fttype1.c
+		SOURCES += $(GM_TTF_DIR)/src/base/ftwinfnt.c
+	
+		SOURCES += $(GM_TTF_DIR)/src/bdf.c
+	
+		#????????????????????????
+		#LIV_RCS += ttf.rc
+	endif
+
+# Build 2) lcms
+	USR_CFLAGS += -D_LCMSLIB_
+	
+	USR_INCLUDES += -I$(where_am_I)/$(GM_LCMS_DIR)/include
+    
+    SOURCES += $(GM_LCMS_DIR)/src/cmsalpha.c
+    SOURCES += $(GM_LCMS_DIR)/src/cmscam02.c
+    SOURCES += $(GM_LCMS_DIR)/src/cmscgats.c
+    SOURCES += $(GM_LCMS_DIR)/src/cmscnvrt.c
+    SOURCES += $(GM_LCMS_DIR)/src/cmserr.c
+    SOURCES += $(GM_LCMS_DIR)/src/cmsgamma.c
+    SOURCES += $(GM_LCMS_DIR)/src/cmsgmt.c
+    SOURCES += $(GM_LCMS_DIR)/src/cmshalf.c
+    SOURCES += $(GM_LCMS_DIR)/src/cmsintrp.c
+    SOURCES += $(GM_LCMS_DIR)/src/cmsio0.c
+    SOURCES += $(GM_LCMS_DIR)/src/cmsio1.c
+    SOURCES += $(GM_LCMS_DIR)/src/cmslut.c
+    SOURCES += $(GM_LCMS_DIR)/src/cmsmd5.c
+    SOURCES += $(GM_LCMS_DIR)/src/cmsmtrx.c
+    SOURCES += $(GM_LCMS_DIR)/src/cmsnamed.c
+    SOURCES += $(GM_LCMS_DIR)/src/cmsopt.c
+    SOURCES += $(GM_LCMS_DIR)/src/cmspack.c
+    SOURCES += $(GM_LCMS_DIR)/src/cmspcs.c
+    SOURCES += $(GM_LCMS_DIR)/src/cmsplugin.c
+    SOURCES += $(GM_LCMS_DIR)/src/cmsps2.c
+    SOURCES += $(GM_LCMS_DIR)/src/cmssamp.c
+    SOURCES += $(GM_LCMS_DIR)/src/cmssm.c
+    SOURCES += $(GM_LCMS_DIR)/src/cmstypes.c
+    SOURCES += $(GM_LCMS_DIR)/src/cmsvirt.c
+    SOURCES += $(GM_LCMS_DIR)/src/cmswtpnt.c
+    SOURCES += $(GM_LCMS_DIR)/src/cmsxform.c
+    	
+# Build 1) -> bzlib
+# CONFLICT WITH ZLIB: multiple definition of `compress2' `compress' `compressBound'
+#
+	#disable bzlib
+	ifeq (0, 1)
+		USR_CFLAGS += -DBZ_EXPORT
+    
+    	HEADERS += $(GM_BZLIB_DIR)/bzlib.h
+    
+    	SOURCES += $(GM_BZLIB_DIR)/blocksort.c
+    	SOURCES += $(GM_BZLIB_DIR)/bzlib.c
+    	SOURCES += $(GM_BZLIB_DIR)/compress.c
+    	SOURCES += $(GM_BZLIB_DIR)/crctable.c
+    	SOURCES += $(GM_BZLIB_DIR)/decompress.c
+    	SOURCES += $(GM_BZLIB_DIR)/huffman.c
+    	SOURCES += $(GM_BZLIB_DIR)/randtable.c
+    
+    	#HOW TO HANDLE RC FILE?
+    	LIB_RCS  += $(GM_BZLIB_DIR)/bzlib.rc
+    endif
+endif # ($(WITH_GRAPHICSMAGICK),YES)
 
 ######################################################################################################
 
 # ###################################### Build Nexus support ###########################################
 ifeq ($(WITH_NEXUS),YES)
-
 #     #LIBRARY_IOC += NeXus  
 
      HEADERS += $(NEXUS_DIR)/$(OS_DEF)/napi.h
