@@ -16,24 +16,32 @@ export E3_ENV_NAME:=e3-env
 #export E3_ENV_TAG:=v0.1
 
 #ADSupport module configuration
-export WITH_NETCDF   	= YES
-export NETCDF_EXTERNAL  = NO
-#Not sure if required or not. HDF5 compiles even without this
-export WITH_SZIP     	= YES
-export SZIP_EXTERNAL 	= NO
-export WITH_ZLIB     	= YES
-export ZLIB_EXTERNAL 	= NO
-export WITH_HDF5     	= YES
-export HDF5_EXTERNAL 	= NO
-export WITH_JPEG     	= YES
-export JPEG_EXTERNAL 	= NO
-export WITH_TIFF     	= YES
-export TIFF_EXTERNAL 	= NO
+export WITH_NETCDF   	   = YES
+export WITH_JPEG     	   = YES
+export WITH_ZLIB     	   = YES
+export WITH_TIFF     	   = YES
+export WITH_SZIP     	   = YES
+#Including XML2 introduce some conflicts with other module!!
+#export WITH_XML2	 	   = YES
+export WITH_HDF5     	   = YES
+export WITH_NEXUS          = YES
+export WITH_GRAPHICSMAGICK = NO
 
-export WITH_NEXUS       = YES
-export NEXUS_EXTERNAL    = NO
+#export NETCDF_EXTERNAL  = NO
+#Not sure if required or not. HDF5 compiles even without this
+
+#export SZIP_EXTERNAL 	= NO
+
+#export ZLIB_EXTERNAL 	= NO
+
+#export HDF5_EXTERNAL 	= NO
+
+#export JPEG_EXTERNAL 	= NO
+
+#export TIFF_EXTERNAL 	= NO
+
+#export NEXUS_EXTERNAL    = NO
 
 #XML2 Requires only EXTERNAL definition
-#Including XML2 introduce some conflicts with other module!!
-#export XML2_EXTERNAL 	= YES
+
 
