@@ -101,6 +101,8 @@ ifeq ($(WITH_GRAPHICSMAGICK),YES)
       USR_CXXFLAGS += -DPREFIX_MAGICK_SYMBOLS
     endif
     
+    USR_LDFLAGS += -lxml2
+    
     USR_INCLUDES += -I$(where_am_I)/$(GRAPHICSMAGICK_DIR)
     USR_INCLUDES += -I$(where_am_I)/$(GM_LCMS_DIR)/include
     USR_INCLUDES += -I$(where_am_I)/$(GM_MAGICK++_DIR)/lib
@@ -164,6 +166,7 @@ ifeq ($(WITH_GRAPHICSMAGICK),YES)
 ifeq (0,1) 
 
 	USR_CFLAGS += -DHAVE_VSNPRINTF
+	USR_CFLAGS += -DBuildMagickModules
     
     ifeq ($(GRAPHICSMAGICK_PREFIX_SYMBOLS),YES)
       USR_CFLAGS += -DPREFIX_MAGICK_SYMBOLS
@@ -178,6 +181,8 @@ ifeq (0,1)
     USR_INCLUDES += -I$(where_am_I)/$(GM_TTF_DIR)/include
     USR_INCLUDES += -I$(where_am_I)/$(GM_WMF_DIR)/include
     USR_INCLUDES += -I$(where_am_I)/$(XML2_DIR)/$(OS_DEF)
+    USR_INCLUDES += -I$(where_am_I)/$(TIFF_DIR)/$(OS_DEF)
+    USR_INCLUDES += -I$(where_am_I)/$(TIFF_DIR)/$(OS_LINUX)
     
     HEADERS += $(GM_CODERS_DIR)/static.h
     
@@ -317,7 +322,7 @@ ifeq (0, 1)
     # Here overriding the default header file install location.
     # This allows Magick++ headers files (at $(INSTALL_LOCATION)/include/Magick++) to
     # include magick header files at relative path e.g. "magick/magick_config.h
-    INSTALL_INCLUDE           = $(INSTALL_LOCATION)/include/magick
+    #INSTALL_INCLUDE           = $(INSTALL_LOCATION)/include/magick
     HEADERS += $(GM_MAGICK_DIR)/magick_config.h
     #HEADERS += $(GM_MAGICK_DIR)/magick_config_Win32.h
     HEADERS += $(GM_MAGICK_DIR)/magick_config_Linux.h
@@ -512,9 +517,127 @@ endif #eq(0, 1)
 # 6) jp2
 
 # 5) webp
+	USR_INCLUDES += -I$(where_am_I)/$(GRAPHICSMAGICK_DIR)/$(GM_WEBP_DIR)/webp
+	
+	#USR_CFLAGS := $(subst -DHAVE_CONFIG_H,,$(USR_CFLAGS))
+	
+	#SRC_DIRS += $(WEBPSRC)/dsp
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/rescalerdsp.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/rescaler_mips32.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/rescaler_mips_dsp_r2.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/rescaler_neon.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/rescaler_sse2.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/lossless.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/lossless_enc.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/lossless_enc_mips32.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/lossless_enc_mips_dsp_r2.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/lossless_enc_neon.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/lossless_enc_sse2.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/lossless_enc_sse41.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/lossless_mips_dsp_r2.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/lossless_neon.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/lossless_sse2.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/filtersdsp.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/filters_mips_dsp_r2.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/filters_sse2.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/enc.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/enc_avx2.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/enc_mips32.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/enc_mips_dsp_r2.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/enc_neon.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/enc_sse2.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/enc_sse41.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/costdsp.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/cost_mips32.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/cost_mips_dsp_r2.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/cost_sse2.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/cpu.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/dec.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/dec_clip_tables.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/dec_mips32.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/dec_mips_dsp_r2.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/dec_msa.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/dec_neon.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/dec_sse2.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/dec_sse41.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/argb.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/argb_mips_dsp_r2.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/argb_sse2.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/alpha_processing.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/alpha_processing_mips_dsp_r2.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/alpha_processing_sse2.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/alpha_processing_sse41.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/upsampling.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/upsampling_mips_dsp_r2.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/upsampling_neon.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/upsampling_sse2.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/yuv.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/yuv_mips32.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/yuv_mips_dsp_r2.c
+	SOURCES += $(GM_WEBP_DIR)/src/dsp/yuv_sse2.c
+
+	#SRC_DIRS += $(WEBPSRC)/mux
+	SOURCES += $(GM_WEBP_DIR)/src/mux/anim_encode.c
+	SOURCES += $(GM_WEBP_DIR)/src/mux/muxedit.c
+	SOURCES += $(GM_WEBP_DIR)/src/mux/muxinternal.c
+	SOURCES += $(GM_WEBP_DIR)/src/mux/muxread.c
+	
+#	SRC_DIRS += $(WEBPSRC)/enc
+	SOURCES += $(GM_WEBP_DIR)/src/enc/vp8lenc.c
+	SOURCES += $(GM_WEBP_DIR)/src/enc/treeenc.c
+	SOURCES += $(GM_WEBP_DIR)/src/enc/token.c
+	SOURCES += $(GM_WEBP_DIR)/src/enc/syntax.c
+	SOURCES += $(GM_WEBP_DIR)/src/enc/near_lossless.c
+	SOURCES += $(GM_WEBP_DIR)/src/enc/picture.c
+	SOURCES += $(GM_WEBP_DIR)/src/enc/picture_csp.c
+	SOURCES += $(GM_WEBP_DIR)/src/enc/picture_psnr.c
+	SOURCES += $(GM_WEBP_DIR)/src/enc/picture_rescale.c
+	SOURCES += $(GM_WEBP_DIR)/src/enc/picture_tools.c
+	SOURCES += $(GM_WEBP_DIR)/src/enc/quantenc.c
+	SOURCES += $(GM_WEBP_DIR)/src/enc/iterator.c
+	SOURCES += $(GM_WEBP_DIR)/src/enc/histogram.c
+	SOURCES += $(GM_WEBP_DIR)/src/enc/frameenc.c
+	SOURCES += $(GM_WEBP_DIR)/src/enc/filter.c
+	SOURCES += $(GM_WEBP_DIR)/src/enc/config.c
+	SOURCES += $(GM_WEBP_DIR)/src/enc/costenc.c
+	SOURCES += $(GM_WEBP_DIR)/src/enc/delta_palettization.c
+	SOURCES += $(GM_WEBP_DIR)/src/enc/backward_references.c
+	SOURCES += $(GM_WEBP_DIR)/src/enc/alphaenc.c
+	SOURCES += $(GM_WEBP_DIR)/src/enc/analysis.c
+	SOURCES += $(GM_WEBP_DIR)/src/enc/webpenc.c
+	
+	#SRC_DIRS += $(WEBPSRC)/utils
+	SOURCES += $(GM_WEBP_DIR)/src/utils/bit_reader.c
+	SOURCES += $(GM_WEBP_DIR)/src/utils/bit_writer.c
+	SOURCES += $(GM_WEBP_DIR)/src/utils/color_cache.c
+	SOURCES += $(GM_WEBP_DIR)/src/utils/filtersutils.c
+	SOURCES += $(GM_WEBP_DIR)/src/utils/huffman.c
+	SOURCES += $(GM_WEBP_DIR)/src/utils/huffman_encode.c
+	SOURCES += $(GM_WEBP_DIR)/src/utils/quant_levels.c
+	SOURCES += $(GM_WEBP_DIR)/src/utils/quant_levels_dec.c
+	SOURCES += $(GM_WEBP_DIR)/src/utils/random.c
+	SOURCES += $(GM_WEBP_DIR)/src/utils/rescalerutils.c
+	SOURCES += $(GM_WEBP_DIR)/src/utils/thread.c
+	SOURCES += $(GM_WEBP_DIR)/src/utils/utils.c
+	
+	#SRC_DIRS += $(WEBPSRC)/dec
+	SOURCES += $(GM_WEBP_DIR)/src/dec/alphadec.c
+	SOURCES += $(GM_WEBP_DIR)/src/dec/buffer.c
+	SOURCES += $(GM_WEBP_DIR)/src/dec/framedec.c
+	SOURCES += $(GM_WEBP_DIR)/src/dec/idec.c
+	SOURCES += $(GM_WEBP_DIR)/src/dec/io.c
+	SOURCES += $(GM_WEBP_DIR)/src/dec/quantdec.c
+	SOURCES += $(GM_WEBP_DIR)/src/dec/treedec.c
+	SOURCES += $(GM_WEBP_DIR)/src/dec/vp8.c
+	SOURCES += $(GM_WEBP_DIR)/src/dec/vp8ldec.c
+	SOURCES += $(GM_WEBP_DIR)/src/dec/webp.c
+	
+	#SRC_DIRS += $(WEBPSRC)/demux
+	SOURCES += $(GM_WEBP_DIR)/src/demux/anim_decode.c
+	SOURCES += $(GM_WEBP_DIR)/src/demux/demux.c
 
 # 4) wmf
-	USR_CFLAGS       += -DHAVE_CONFIG_H
+	#USR_CFLAGS       += -DHAVE_CONFIG_H
 	USR_CFLAGS       += -D_EXPORT
     
 	USR_INCLUDES += -I$(where_am_I)/$(GRAPHICSMAGICK_DIR)
@@ -528,8 +651,6 @@ endif #eq(0, 1)
 	SOURCES += $(GM_WMF_DIR)/src/player.c
 	SOURCES += $(GM_WMF_DIR)/src/recorder.c
 	
-	
-    
 # Build 3) ttf -----------> OMG!!!!!!!!!!!!!!!
 	ifeq (0, 1)
 		USR_INCLUDES += -I$(where_am_I)/$(GM_TTF_DIR)/include
@@ -671,7 +792,7 @@ endif # ($(WITH_NEXUS),YES)
 # #################################### HDF5 (and HDF_HL) #####################################
 
 # #Building HDF5_DIR Support. This inclueds both hd5Src and hd5_hdlSrc
-# ifeq ($(WITH_HDF5),YES)
+ifeq ($(WITH_HDF5),YES)
 
 #     #USR_INCLUDES += -I../$(HDF5_DIR)
 #     #USR_INCLUDES += -I../$(HDF5HL_DIR)
@@ -1064,7 +1185,7 @@ endif # ($(WITH_NEXUS),YES)
 
 # 	#Do not consider WIN32 compilation at this stage
 #     #LIB_SYS_LIBS_WIN32 += ws2_32
-# endif # ($(WITH_HDF5),YES)
+endif # ($(WITH_HDF5),YES)
 
 # #############################################################################################
 
@@ -1115,15 +1236,15 @@ ifeq ($(WITH_XML2),YES)
 #   #xml2_SYS_LIBS_WIN32 += ws2_32
 
 #   # Need _REENTRANT flag on Linux for threads to build correctly
-#   USR_CFLAGS_Linux += -D_REENTRANT
+   USR_CFLAGS_Linux += -D_REENTRANT
 
 #   #INC_WIN32 += win32config.h
 #   #INC_WIN32 += wsockcompat.h
 #   #INC_Darwin += config.h
 #   #INC_Linux += config_32.h
 #   #INC_Linux += config_64.h
-   HEADERS += config_32.h
-   HEADERS += config_64.h
+   HEADERS += $(XML2_DIR)/$(OS_LINUX)/config_32.h
+   HEADERS += $(XML2_DIR)/$(OS_LINUX)/config_64.h
 
    HEADERS += $(XML2_DIR)/$(OS_DEF)/libxml/DOCBparser.h
    HEADERS += $(XML2_DIR)/$(OS_DEF)/libxml/globals.h 
@@ -1405,7 +1526,7 @@ ifeq ($(WITH_NETCDF),YES)
 	USR_INCLUDES += -I$(where_am_I)/$(NETCDF_DIR)/$(OS_LINUX)
 	USR_INCLUDES += -I$(where_am_I)/$(NETCDF_DIR)/$(OS_DEF)
 
-	USR_CFLAGS += -DHAVE_CONFIG_H
+	#USR_CFLAGS += -DHAVE_CONFIG_H
 
 	HEADERS += $(NETCDF_DIR)/$(OS_DEF)/netcdf.h
 

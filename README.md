@@ -12,7 +12,7 @@ The following module have been integrated:
 * HDF5 and HDLF_HL
 * jpeg
 * tiff
-* xml2 (disabled, see Issues)
+* xml2 (disabled, Issues)
 * nexus
 * GraphicsMagick (partially supported, see Issues)
 
@@ -58,7 +58,7 @@ The GraphicsMagick support consists in 12 sub modules. Not all them have been in
 | lcms  | | OK |
 | ttf   | | __NOT FULLY INTEGRATED (COMPLEX DIRECTORY STRUCTURE)__ |
 | wmf	| | OK |
-| webp  | | __NOT INTEGRATED (COMPLEX DIRECTORY STRUCTURE)__ |
+| webp  | | OK |
 | jp2   | | __NOT INTEGRATED (COMPLEX DIRECTORY STRUCTURE)__ |
 | jbig  | | OK |
 | png   | bzlib | OK |

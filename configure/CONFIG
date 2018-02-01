@@ -21,27 +21,13 @@ export WITH_JPEG     	   = YES
 export WITH_ZLIB     	   = YES
 export WITH_TIFF     	   = YES
 export WITH_SZIP     	   = YES
-#Including XML2 introduce some conflicts with other module!!
-#export WITH_XML2	 	   = YES
+#Including XML2 introduce some conflicts with other module!! Try to use the linux one.
+export WITH_XML2	 	   = NO
 export WITH_HDF5     	   = YES
 export WITH_NEXUS          = YES
+
+#GraphicsMagick is partially integrated. It generate a lot of name conflicts. It is disabled since not required currently.
 export WITH_GRAPHICSMAGICK = NO
 
-#export NETCDF_EXTERNAL  = NO
-#Not sure if required or not. HDF5 compiles even without this
-
-#export SZIP_EXTERNAL 	= NO
-
-#export ZLIB_EXTERNAL 	= NO
-
-#export HDF5_EXTERNAL 	= NO
-
-#export JPEG_EXTERNAL 	= NO
-
-#export TIFF_EXTERNAL 	= NO
-
-#export NEXUS_EXTERNAL    = NO
-
-#XML2 Requires only EXTERNAL definition
 
 
