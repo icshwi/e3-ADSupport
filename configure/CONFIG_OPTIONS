@@ -1,31 +1,49 @@
 #ADSupport module configuration
 
 
-WITH_NETCDF0:=YES
+
+WITH_NETCDF:=YES
+WITH_JPEG:=YES
+WITH_ZLIB:=YES
+WITH_SZIP:=YES
 
 
-WITH_JPEG:=NO
-WITH_ZLIB:=NO
+# TIFF depends on ZLIB, so WITH_ZLIB:=YES
+WITH_TIFF:=YES
 
-# Dependent upon ZLIB 
-WITH_TIFF:=NO
+# BLOSC depends on ZLIB, so WITH_ZLIB:=YES
+WITH_BLOSC:=YES
+
+
+## Current implementation doesn't support both XML2 and GRAPHICSMAGICK.
+## One should use the external libraries instead of ADSupport
+
+# XML2 depends on ZLIB, so WITH_ZLIB:=YES
 WITH_XML2:=NO
+# GRAPHICSMAGICK depends on ZLIB, TIFF, XML2, JPEG
 WITH_GRAPHICSMAGICK:=NO
 
-WITH_SZIP:=NO
-WITH_HDF5:=NO
-WITH_NEXUS:=NO
+# HDF5 depends on SZIP, ZLIB, BLOSC
+WITH_HDF5:=YES
+
+# NEXUS depends on HDF5
+WITH_NEXUS:=YES
 
 
-# Somehow WITH_NETCDF cannot be shown in make env
-export WITH_NETCDF0
+
+export WITH_NETCDF
 export WITH_JPEG
 export WITH_ZLIB
 export WITH_TIFF
+export WITH_BLOSC
+
+
 export WITH_SZIP
 export WITH_HDF5
 export WITH_NEXUS
-
-
 export WITH_XML2
 export WITH_GRAPHICSMAGICK
+
+
+
+

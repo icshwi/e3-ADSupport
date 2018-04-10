@@ -44,13 +44,14 @@ SZIP_DIR			:= $(APPS)/szipSrc
 
 # DEPEND on zlibSrc
 TIFF_DIR			:= $(APPS)/tiffSrc
+BLOSC_DIR                       := $(APPS)/bloscSrc
 XML2_DIR			:= $(APPS)/xml2Src
 
 # DEPEND on zlibSrc sizpSrc
 HDF5_DIR			:= $(APPS)/hdf5Src
 
 # DEPEND on hdf5Src
-HDF5HL_DIR			:= $(APPS)/hdf5_hlSrc
+HDF5_HL_DIR			:= $(APPS)/hdf5_hlSrc
 NEXUS_DIR			:= $(APPS)/nexusSrc
 
 # DEPEND on tiffSrc zlibSrc xml2Src jpegSrc
@@ -60,11 +61,11 @@ GRAPHICSMAGICK_DIR 	:= $(APPS)/GraphicsMagickSrc
 GM_BZLIB_DIR 	:= $(GRAPHICSMAGICK_DIR)/bzlib
 GM_LCMS_DIR  	:= $(GRAPHICSMAGICK_DIR)/lcms
 GM_TTF_DIR   	:= $(GRAPHICSMAGICK_DIR)/ttf
-GM_WMF_DIR	 	:= $(GRAPHICSMAGICK_DIR)/wmf
-GM_WEBP_DIR	 	:= $(GRAPHICSMAGICK_DIR)/webp
-GM_JBIG_DIR	 	:= $(GRAPHICSMAGICK_DIR)/jbig
-GM_JP2_DIR		:= $(GRAPHICSMAGICK_DIR)/jp2
-GM_PNG_DIR	 	:= $(GRAPHICSMAGICK_DIR)/png
+GM_WMF_DIR 	:= $(GRAPHICSMAGICK_DIR)/wmf
+GM_WEBP_DIR 	:= $(GRAPHICSMAGICK_DIR)/webp
+GM_JBIG_DIR 	:= $(GRAPHICSMAGICK_DIR)/jbig
+GM_JP2_DIR	:= $(GRAPHICSMAGICK_DIR)/jp2
+GM_PNG_DIR 	:= $(GRAPHICSMAGICK_DIR)/png
 GM_MAGICK_DIR	:= $(GRAPHICSMAGICK_DIR)/magick
 GM_MAGICK++_DIR	:= $(GRAPHICSMAGICK_DIR)/Magick++
 GM_CODERS_DIR	:= $(GRAPHICSMAGICK_DIR)/coders
@@ -93,6 +94,10 @@ USR_CPPFLAGS += -Wno-unused-but-set-variable
 # 11) filters  -> magick ttf							[OK]
 # 12) Magick++ -> magick coders							[OK]
 ##############################################################################################
+
+
+
+
 
 ifeq ($(WITH_GRAPHICSMAGICK),YES)
 
@@ -760,9 +765,9 @@ endif # ($(WITH_GRAPHICSMAGICK),YES)
 
 ######################################################################################################
 
-# ###################################### Build Nexus support ###########################################
+
+
 ifeq ($(WITH_NEXUS),YES)
-#     #LIBRARY_IOC += NeXus  
 
 HEADERS += $(NEXUS_DIR)/$(OS_DEF)/napi.h
 HEADERS += $(NEXUS_DIR)/$(OS_DEF)/napiconfig.h
@@ -779,51 +784,44 @@ SOURCES += $(NEXUS_DIR)/stptok.c
 
 USR_CFLAGS += -DHDF5 -D_FILE_OFFSET_BITS=64
 
-#     # Travis/ubuntu 12.04 tweak: persuade the hdf5 library build to use API v18 over v16
+# Travis/ubuntu 12.04 tweak: persuade the hdf5 library build to use API v18 over v16
 USR_CFLAGS += -DH5_NO_DEPRECATED_SYMBOLS -DH5Gopen_vers=2
 
-#     ifeq ($(SHARED_LIBRARIES),YES)
-#       USR_CFLAGS_WIN32 += -DDLL_NEXUS
-#       USR_CFLAGS_WIN32 += -DH5_BUILT_AS_DYNAMIC_LIB
-#       NeXus.dll: USR_CFLAGS_WIN32 += -DDLL_EXPORT
-#     endif
+
 endif # ($(WITH_NEXUS),YES)
-# ############################################################################################
 
-# #################################### HDF5 (and HDF_HL) #####################################
 
-# #Building HDF5_DIR Support. This inclueds both hd5Src and hd5_hdlSrc
+
+# Building HDF5_DIR Support. This inclueds both hd5Src and hd5_hdlSrc
 ifeq ($(WITH_HDF5),YES)
 
-#     #USR_INCLUDES += -I../$(HDF5_DIR)
-#     #USR_INCLUDES += -I../$(HDF5HL_DIR)
-#     #It seems that this is not needed since in some way there are already added before...
-#     #USR_INCLUDES += -I$(where_am_I)/$(HDF5_DIR)
-#     #USR_INCLUDES += -I$(where_am_I)/$(HDF5HL_DIR)
-
 USR_CFLAGS += -D NDEBUG
-#     ifeq ($(SHARED_LIBRARIES), YES)
-#       USR_CFLAGS_WIN32 += -D H5_BUILT_AS_DYNAMIC_LIB 
-#       USR_CFLAGS_WIN32 += -D hdf5_hl_shared_EXPORTS
-#       ifeq (mingw, $(findstring mingw, $(T_A)))
-#         USR_CFLAGS_WIN32 += -D__MSVCRT_VERSION__=0x800
-#       else
-#         # The thread code on mingw needs work, get compiler errors
-#         USR_CFLAGS_WIN32 += -D H5_HAVE_THREADSAFE
-#       endif
-#     endif
 
-#     #Headers defined for $(HDF5HL_DIR)
-HEADERS += $(HDF5HL_DIR)/H5DOpublic.h
-HEADERS += $(HDF5HL_DIR)/H5DSpublic.h
-HEADERS += $(HDF5HL_DIR)/H5IMpublic.h
-HEADERS += $(HDF5HL_DIR)/H5LDpublic.h
-HEADERS += $(HDF5HL_DIR)/H5LTpublic.h
-HEADERS += $(HDF5HL_DIR)/H5PTpublic.h
-HEADERS += $(HDF5HL_DIR)/H5TBpublic.h
-HEADERS += $(HDF5HL_DIR)/hdf5_hl.h
-#     
-#     #Headers defined for $(HDF5_DIR)
+USR_INCLUDES += -I$(where_am_I)$(HDF5_HL_DIR)
+
+
+HEADERS += $(HDF5_HL_DIR)/H5DOpublic.h
+HEADERS += $(HDF5_HL_DIR)/H5DSpublic.h
+HEADERS += $(HDF5_HL_DIR)/H5IMpublic.h
+HEADERS += $(HDF5_HL_DIR)/H5LDpublic.h
+HEADERS += $(HDF5_HL_DIR)/H5LTpublic.h
+HEADERS += $(HDF5_HL_DIR)/H5PTpublic.h
+HEADERS += $(HDF5_HL_DIR)/H5TBpublic.h
+HEADERS += $(HDF5_HL_DIR)/hdf5_hl.h
+
+SOURCES += $(HDF5_HL_DIR)/H5DO.c
+SOURCES += $(HDF5_HL_DIR)/H5DS.c
+SOURCES += $(HDF5_HL_DIR)/H5IM.c
+SOURCES += $(HDF5_HL_DIR)/H5LD.c
+SOURCES += $(HDF5_HL_DIR)/H5LT.c
+SOURCES += $(HDF5_HL_DIR)/H5LTanalyze.c
+SOURCES += $(HDF5_HL_DIR)/H5LTparse.c
+SOURCES += $(HDF5_HL_DIR)/H5PT.c
+SOURCES += $(HDF5_HL_DIR)/H5TB.c
+
+
+USR_INCLUDES += -I$(where_am_I)$(HDF5_DIR)
+
 HEADERS += $(HDF5_DIR)/$(OS_DEF)/H5ACpublic.h
 HEADERS += $(HDF5_DIR)/$(OS_DEF)/H5api_adpt.h
 HEADERS += $(HDF5_DIR)/$(OS_DEF)/H5Apublic.h
@@ -866,23 +864,10 @@ HEADERS += $(HDF5_DIR)/$(OS_DEF)/H5version.h
 HEADERS += $(HDF5_DIR)/$(OS_DEF)/H5Zpublic.h
 HEADERS += $(HDF5_DIR)/$(OS_DEF)/hdf5.h
 HEADERS += $(HDF5_DIR)/$(OS_DEF)/H5pubconf.h
-#     #HEADERS_Linux += $(HDF5_DIR)/H5pubconf_32.h
-#     #HEADERS_Linux += $(HDF5_DIR)/H5pubconf_64.h
 HEADERS += $(HDF5_DIR)/$(OS_LINUX)/H5pubconf_32.h
 HEADERS += $(HDF5_DIR)/$(OS_LINUX)/H5pubconf_64.h
 
-#Add sources from HDF5HL_DIR first
-SOURCES += $(HDF5HL_DIR)/H5DO.c
-SOURCES += $(HDF5HL_DIR)/H5DS.c
-SOURCES += $(HDF5HL_DIR)/H5IM.c
-SOURCES += $(HDF5HL_DIR)/H5LD.c
-SOURCES += $(HDF5HL_DIR)/H5LT.c
-SOURCES += $(HDF5HL_DIR)/H5LTanalyze.c
-SOURCES += $(HDF5HL_DIR)/H5LTparse.c
-SOURCES += $(HDF5HL_DIR)/H5PT.c
-SOURCES += $(HDF5HL_DIR)/H5TB.c
 
-# 	#Include sorce for HDF5_DIR
 SOURCES += $(HDF5_DIR)/H5.c
 SOURCES += $(HDF5_DIR)/H5checksum.c
 SOURCES += $(HDF5_DIR)/H5dbg.c
@@ -1165,39 +1150,22 @@ SOURCES += $(HDF5_DIR)/H5Zscaleoffset.c
 SOURCES += $(HDF5_DIR)/H5Zshuffle.c
 SOURCES += $(HDF5_DIR)/H5Zszip.c
 SOURCES += $(HDF5_DIR)/H5Ztrans.c
+
+SOURCES += $(HDF5_DIR)/$(OS_LINUX)/H5Tinit.c
+
 SOURCES += $(HDF5_DIR)/H5lib_settings.c
 
 # H5Tinit.c is architecture specific
 SOURCES += $(HDF5_DIR)/$(OS_LINUX)/H5Tinit.c
 
-# 	#Do not suppor vxWorks at this stage
-# 	#SOURCES_vxWorks += $(HDF5_DIR)/H5vxWorks.c
+ifeq ($(WITH_BLOSC),YES)
+SOURCES += $(HDF5_DIR)/blosc_filter.c
+endif	
 
-#     # This file allows printing how the library was configured.
-#     # It is not yet correct for each system.
-#     SOURCES += $(HDF5_DIR)/H5lib_settings.c
-#     ifeq (0, 1)
-#     	LIB_SYS_LIBS_WIN32 += ws2_32
-# 		H5detect_SRCS += H5detect.c
-# 		PROD_SYS_LIBS_WIN32 += ws2_32
-# 	endif
-
-#     #LIB_LIBS += hdf5
-
-# 	#Do not consider WIN32 compilation at this stage
-#     #LIB_SYS_LIBS_WIN32 += ws2_32
 endif # ($(WITH_HDF5),YES)
 
-# #############################################################################################
 
-# #################################### SZIP ###################################################
 ifeq ($(WITH_SZIP),YES)
-
-#     #LIBRARY_IOC = szip
-
-#     ifeq ($(SHARED_LIBRARIES),YES)
-#       USR_CFLAGS_WIN32 += -DSZ_BUILT_AS_DYNAMIC_LIB -Dszip_EXPORTS
-#     endif
 
 HEADERS += $(SZIP_DIR)/$(OS_DEF)/SZconfig.h
 HEADERS += $(SZIP_DIR)/$(OS_DEF)/rice.h
@@ -1205,47 +1173,21 @@ HEADERS += $(SZIP_DIR)/$(OS_DEF)/ricehdf.h
 HEADERS += $(SZIP_DIR)/$(OS_DEF)/szip_adpt.h
 HEADERS += $(SZIP_DIR)/$(OS_DEF)/szlib.h
 
-
-#     SOURCES += $(wildcard $(SZIP_DIR)/*.c)
-
 SOURCES += $(SZIP_DIR)/encoding.c
 SOURCES += $(SZIP_DIR)/rice.c
 SOURCES += $(SZIP_DIR)/sz_api.c
+
 endif # ($(WITH_SZIP),YES)
 
-# ##############################################################################################
 
-# #################################### XML2 ###################################################
 
 ifeq ($(WITH_XML2),YES)
 
-#   #LIBRARY = xml2
-
-#   #We build all together for the time being
-#   #ifeq ($(WITH_ZLIB),YES)
-#   #  ifeq ($(ZLIB_EXTERNAL),NO)
-#   #    USR_CFLAGS_WIN32 += -DHAVE_ZLIB_H
-#   #    LIB_LIBS += zlib
-#   #  endif # ($(ZLIB_EXTERNAL),NO)
-#   #endif # ($(WITH_ZLIB),YES)
-
-#   #Only Linux support
-#   #USR_CFLAGS_WIN32 += -DWIN32
-#   #ifeq ($(SHARED_LIBRARIES),YES)
-#   #  USR_CFLAGS += -DPIC -DNOLIBTOOL
-#   #endif
-#   #xml2_SYS_LIBS_WIN32 += ws2_32
-
-#   # Need _REENTRANT flag on Linux for threads to build correctly
+#   Need _REENTRANT flag on Linux for threads to build correctly
 USR_CFLAGS_Linux += -D_REENTRANT
 
-#   #INC_WIN32 += win32config.h
-#   #INC_WIN32 += wsockcompat.h
-#   #INC_Darwin += config.h
-#   #INC_Linux += config_32.h
-#   #INC_Linux += config_64.h
-HEADERS += $(XML2_DIR)/$(OS_LINUX)/config_32.h
-HEADERS += $(XML2_DIR)/$(OS_LINUX)/config_64.h
+#HEADERS += $(XML2_DIR)/$(OS_LINUX)/config_32.h
+#HEADERS += $(XML2_DIR)/$(OS_LINUX)/config_64.h
 
 HEADERS += $(XML2_DIR)/$(OS_DEF)/libxml/DOCBparser.h
 HEADERS += $(XML2_DIR)/$(OS_DEF)/libxml/globals.h 
@@ -1311,11 +1253,7 @@ SOURCES += $(XML2_DIR)/HTMLparser.c
 SOURCES += $(XML2_DIR)/HTMLtree.c
 SOURCES += $(XML2_DIR)/legacy.c
 SOURCES += $(XML2_DIR)/list.c
-#   # nanoftp and nanohttp won't build on vxWorks.  They are only needed for GraphicsMagick
-#   ifneq (vxWorks, $(OS_CLASS))
-#     SOURCES += $(XML2_DIR)/nanoftp.c
-#     SOURCES += $(XML2_DIR)/nanohttp.c
-#   endif
+
 SOURCES += $(XML2_DIR)/parser.c
 SOURCES += $(XML2_DIR)/parserInternals.c
 SOURCES += $(XML2_DIR)/pattern.c
@@ -1344,18 +1282,83 @@ SOURCES += $(XML2_DIR)/xpointer.c
 SOURCES += $(XML2_DIR)/xmlstring.c
 
 endif # ($(XML2_EXTERNAL),NO)
-# #############################################################################################
 
-# ######################################### TIFF  #######################################
+
+
+
+
+ifeq ($(WITH_BLOSC),YES)
+
+BLOSC_PATH:=$(BLOSC_DIR)/blosc
+INTCLIBS_PATH:=$(BLOSC_DIR)/internal-complibs
+ZSTD_PATH:=$(INTCLIBS_PATH)/zstd-1.3.0
+SNAPPY_PATH:=$(INTCLIBS_PATH)/snappy-1.1.1
+LZ4_PATH:=$(INTCLIBS_PATH)/lz4-1.7.5
+
+# Only exists in bloscSrc
+USR_CFLAGS += -DHAVE_ZSTD
+
+USR_INCLUDES += -I$(where_am_I)$(ZSTD_PATH)
+
+SOURCES += $(ZSTD_PATH)/common/entropy_common.c
+SOURCES += $(ZSTD_PATH)/common/error_private.c
+SOURCES += $(ZSTD_PATH)/common/fse_decompress.c
+SOURCES += $(ZSTD_PATH)/common/pool.c
+SOURCES += $(ZSTD_PATH)/common/threading.c
+SOURCES += $(ZSTD_PATH)/common/xxhash.c
+SOURCES += $(ZSTD_PATH)/common/zstd_common.c
+SOURCES += $(ZSTD_PATH)/compress/fse_compress.c
+SOURCES += $(ZSTD_PATH)/compress/huf_compress.c
+SOURCES += $(ZSTD_PATH)/compress/zstd_compress.c
+SOURCES += $(ZSTD_PATH)/compress/zstdmt_compress.c
+SOURCES += $(ZSTD_PATH)/decompress/huf_decompress.c
+SOURCES += $(ZSTD_PATH)/decompress/zstd_decompress.c
+
+# Only exists in bloscSrc
+USR_CFLAGS += -DHAVE_SNAPPY
+SOURCES += $(SNAPPY_PATH)/snappy.cc
+SOURCES += $(SNAPPY_PATH)/snappy-c.cc
+SOURCES += $(SNAPPY_PATH)/snappy-sinksource.cc
+SOURCES += $(SNAPPY_PATH)/snappy-stubs-internal.cc
+
+# Only exists in bloscSrc
+USR_CFLAGS += -DHAVE_LZ4
+SOURCES += $(LZ4_PATH)/lz4.c
+SOURCES += $(LZ4_PATH)/lz4hc.c
+
+
+
+HEADERS += $(BLOSC_PATH)/blosc.h
+HEADERS += $(BLOSC_PATH)/blosc-export.h
+
+SOURCES += $(BLOSC_PATH)/bitshuffle-generic.c
+SOURCES += $(BLOSC_PATH)/blosc.c
+SOURCES += $(BLOSC_PATH)/blosclz.c
+SOURCES += $(BLOSC_PATH)/shuffle.c
+SOURCES += $(BLOSC_PATH)/shuffle-generic.c
+
+# Don't have any information about the following variables
+ifeq ($(BLOSC_SSE2),YES)
+SOURCES += $(BLOSC_PATH)/shuffle-sse2.c
+SOURCES += $(BLOSC_PATH)/bitshuffle-sse2.c
+endif
+ifeq ($(BLOSC_AVX2),YES)
+SOURCES += $(BLOSC_PATH)/shuffle-avx2.c 
+SOURCES += $(BLOSC_PATH)/bitshuffle-avx2.c
+endif
+
+endif # ($(WITH_BLOSC),YES)
+
+
+
+
 ifeq ($(WITH_TIFF),YES)
+#ifeq ($(TIFF_EXTERNAL),NO)
 
 HEADERS += $(TIFF_DIR)/$(OS_DEF)/tiff.h 
 HEADERS += $(TIFF_DIR)/$(OS_DEF)/tiffio.h 
 HEADERS += $(TIFF_DIR)/$(OS_DEF)/tiffvers.h 
 HEADERS += $(TIFF_DIR)/$(OS_LINUX)/tiffconf.h 
-#     #INC_Linux += tiffconf_32.h
-#     #INC_Linux += tiffconf_64.h
-#     #It works like this?
 HEADERS += $(TIFF_DIR)/$(OS_LINUX)/tiffconf_32.h
 HEADERS += $(TIFF_DIR)/$(OS_LINUX)/tiffconf_64.h
 
@@ -1397,25 +1400,24 @@ SOURCES += $(TIFF_DIR)/tif_version.c
 SOURCES += $(TIFF_DIR)/tif_warning.c
 SOURCES += $(TIFF_DIR)/tif_write.c
 SOURCES += $(TIFF_DIR)/tif_zip.c
-#     #tiff_SRCS_Linux += tif_unix.c
 SOURCES += $(TIFF_DIR)/tif_unix.c
-#     #Only Linux support for the time being
-#     ifeq (0, 1)
-#     	tiff_SRCS_WIN32 += tif_win32.c
-#     	tiff_SRCS_vxWorks += tif_vxWorks.c
-#     endif
+
+
+
+# endif # ($(TIFF_EXTERNAL),NO)
 endif # ($(WITH_TIFF),YES)
 # #############################################################################################
 
 
-# ######################################### ZLIB  #######################################
-# #Configure Makefile for zLib support
-ifeq ($(WITH_ZLIB),YES)
 
-USR_INCLUDES += -I$(where_am_I)/$(ZLIB_DIR)/$(OS_LINUX)
-USR_INCLUDES += -I$(where_am_I)/$(ZLIB_DIR)/$(OS_DEF)
-HEADERS      += $(ZLIB_DIR)/$(OS_DEF)/zlib.h
-HEADERS      += $(ZLIB_DIR)/$(OS_LINUX)/zconf.h
+ifeq ($(WITH_ZLIB),YES)
+#ifeq ($(ZLIB_EXTERNAL),NO)	
+
+USR_INCLUDES += -I$(where_am_I)$(ZLIB_DIR)/$(OS_LINUX)
+USR_INCLUDES += -I$(where_am_I)$(ZLIB_DIR)/$(OS_DEF)
+
+HEADERS += $(ZLIB_DIR)/$(OS_LINUX)/zconf.h
+HEADERS += $(ZLIB_DIR)/$(OS_DEF)/zlib.h
 
 SOURCES += $(ZLIB_DIR)/adler32.c
 SOURCES += $(ZLIB_DIR)/compress.c
@@ -1433,14 +1435,16 @@ SOURCES += $(ZLIB_DIR)/trees.c
 SOURCES += $(ZLIB_DIR)/uncompr.c
 SOURCES += $(ZLIB_DIR)/zutil.c
 
-
+#endif # ($(ZLIB_EXTERNAL),NO)	
 endif # ($(WITH_ZLIB),YES)
-# #############################################################################################
 
-# ######################################### JEPG  #######################################
+
+
 ifeq ($(WITH_JPEG),YES)
-USR_INCLUDES += -I$(where_am_I)/$(JPEG_DIR)/$(OS_LINUX)
-USR_INCLUDES += -I$(where_am_I)/$(JPEG_DIR)/$(OS_DEF)
+#ifeq ($(JPEG_EXTERNAL),NO)
+USR_INCLUDES += -I$(where_am_I)$(JPEG_DIR)/$(OS_LINUX)
+USR_INCLUDES += -I$(where_am_I)$(JPEG_DIR)/$(OS_DEF)
+
 HEADERS += $(JPEG_DIR)/$(OS_DEF)/jpeglib.h
 HEADERS += $(JPEG_DIR)/$(OS_DEF)/jerror.h  
 HEADERS += $(JPEG_DIR)/$(OS_LINUX)/jconfig.h 
@@ -1492,19 +1496,19 @@ SOURCES += $(JPEG_DIR)/jquant2.c
 SOURCES += $(JPEG_DIR)/jutils.c 
 SOURCES += $(JPEG_DIR)/jmemmgr.c
 SOURCES += $(JPEG_DIR)/jmemnobs.c
+#endif # ($(JPEG_EXTERNAL),NO)
 endif # ($(WITH_JPEG),YES)
 
-########################################################################################
 
 
-ifeq ($(WITH_NETCDF0),YES)
 
-USR_INCLUDES += -I$(where_am_I)/$(NETCDF_DIR)/inc
-USR_INCLUDES += -I$(where_am_I)/$(NETCDF_DIR)/$(OS_LINUX)
-USR_INCLUDES += -I$(where_am_I)/$(NETCDF_DIR)/$(OS_DEF)
 
-USR_CFLAGS += -DHAVE_CONFIG_H
-USR_CFLAGS += -DHAVE_STDINT_H
+ifeq ($(WITH_NETCDF),YES)
+#ifeq ($(NETCDF_EXTERNAL),NO)
+
+USR_INCLUDES += -I$(where_am_I)$(NETCDF_DIR)/inc
+USR_INCLUDES += -I$(where_am_I)$(NETCDF_DIR)/$(OS_LINUX)
+USR_INCLUDES += -I$(where_am_I)$(NETCDF_DIR)/$(OS_DEF)
 
 HEADERS += $(NETCDF_DIR)/$(OS_DEF)/netcdf.h
 
@@ -1531,81 +1535,9 @@ SOURCES += $(NETCDF_DIR)/libdispatch/nc_uri.c
 SOURCES += $(NETCDF_DIR)/libdispatch/var1.c
 
 SOURCES += $(NETCDF_DIR)/liblib/stub.c
+#endif # ($(NETCDF_EXTERNAL),NO)
 endif # ($(WITH_NETCDF),YES)
 
-
-
-
-
-# ifeq ($(WITH_NETCDF0),YES)
-
-# USR_INCLUDES += -I$(where_am_I)$(NETCDF_DIR)/inc
-# USR_INCLUDES += -I$(where_am_I)$(NETCDF_DIR)/$(OS_LINUX)
-# # USR_INCLUDES += -I$(where_am_I)$(NETCDF_DIR)/$(OS_DEF)
-# # USR_INCLUDES += -iquote $(where_am_I)$(NETCDF_DIR)/libsrc
-# # USR_INCLUDES += -iquote $(where_am_I)$(NETCDF_DIR)/libdispatch
-# # USR_INCLUDES += -iquote $(where_am_I)$(NETCDF_DIR)/liblib
-
-# # In file included from supportApp/netCDFSrc/inc/nc.h:15:0,
-# #                  from supportApp/netCDFSrc/inc/ncdispatch.h:21,
-# #                  from ../supportApp/netCDFSrc/liblib/stub.c:10:
-# # supportApp/netCDFSrc/libsrc/pstdint.h:456:36: error: conflicting types for ‘int64_t’
-# #     __extension__ typedef long long int64_t;
-# #                                     ^
-# # In file included from /usr/include/stdlib.h:314:0,
-# #                  from /home/jhlee/e3-developing/tools/e3-ADSupport/ADSupport/supportApp/netCDFSrc/inc/ncdispatch.h:13,
-# #                  from ../supportApp/netCDFSrc/liblib/stub.c:10:
-# # /usr/include/x86_64-linux-gnu/sys/types.h:197:1: note: previous declaration of ‘int64_t’ was here
-# #  __intN_t (64, __DI__);
-
-# #ifndef HAVE_STDINT_H
-# #  include "pstdint.h"	/* attempts to define uint32_t etc portably */
-# #else
-# #  include <stdint.h>
-
-# # Somehow, it conflicts with types.h, We force to use STDINT instead of potable stdint.h
-
-# USR_CFLAGS += -DHAVE_STDINT_H
-
-# USR_CFLAGS += -DHAVE_CONFIG_H
-
-# HEADERS += $(NETCDF_DIR)/os/default/netcdf.h
-# #HEADERS += $(NETCDF_DIR)/os/Linux/config.h
-
-
-
-
-
-
-
-# SOURCES += $(NETCDF_DIR)/liblib/stub.c
-
-
-# SOURCES += $(NETCDF_DIR)/libdispatch/var1.c
-# SOURCES += $(NETCDF_DIR)/libdispatch/nc_uri.c
-# SOURCES += $(NETCDF_DIR)/libdispatch/file.c
-# SOURCES += $(NETCDF_DIR)/libdispatch/error.c
-# SOURCES += $(NETCDF_DIR)/libdispatch/dispatch.c
-# SOURCES += $(NETCDF_DIR)/libdispatch/dim1.c
-# SOURCES += $(NETCDF_DIR)/libdispatch/att.c
-
-
-# SOURCES += $(NETCDF_DIR)/libsrc/var.c
-# SOURCES += $(NETCDF_DIR)/libsrc/v1hpg.c
-# SOURCES += $(NETCDF_DIR)/libsrc/utf8proc.c
-
-# SOURCES += $(NETCDF_DIR)/libsrc/string.c
-# SOURCES += $(NETCDF_DIR)/libsrc/putget.c
-# SOURCES += $(NETCDF_DIR)/libsrc/posixio.c
-# SOURCES += $(NETCDF_DIR)/libsrc/ncx.c
-# SOURCES += $(NETCDF_DIR)/libsrc/nclistmgr.c
-# SOURCES += $(NETCDF_DIR)/libsrc/nc3dispatch.c
-# SOURCES += $(NETCDF_DIR)/libsrc/nc.c
-# SOURCES += $(NETCDF_DIR)/libsrc/lookup3.c
-# SOURCES += $(NETCDF_DIR)/libsrc/dim.c
-# SOURCES += $(NETCDF_DIR)/libsrc/attr.c
-
-# endif # ($(WITH_NETCDF0),YES)
 
 
 

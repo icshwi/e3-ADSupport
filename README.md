@@ -1,45 +1,55 @@
 # e3-ADSupport
 
-This module is intended as integration of the EPICS ADSupport into ESS e3 environment
+This is the ESS customized single library (ADSupport) in order to integrate ADCore and others modules. However, the current limitations (not-supported) will be considered to use them.
+
 
 ## Current status
 
-The following module have been integrated:
+The following libraries are supported as the one ADSupport library :
 
 * netCDF
-* szip
-* zlib
-* HDF5 and HDLF_HL
 * jpeg
+* zlib
+* szip
 * tiff
-* xml2 (disabled, Issues)
+* blosc
+* hdf5 and hdf5_hl
 * nexus
-* GraphicsMagick (partially supported, see Issues)
+
+The following libs are not supported :
+* xml2
+* GraphicsMagick
 
 ## Configuration compilation and installation
 
 ```
 $ git clone https://github.com/icshwi/e3-ADSupport.git
 $ cd e3-ADSupport
-$ make build install
+$ git checkout target_path_test
+$ make init
+$ make build
+$ make install 
 ```
 
 Try to load the library to verify that is properly installed and without _"Undefined Symbols"_ 
 
 ```
-$ iocsh.bash -r ADSupport,1.3.0
+$ iocsh.bash -r ADSupport,1.4.0
 ......
-require ADSupport,1.3.0
-Module ADSupport version 1.3.0 found in /epics/modules/ADSupport/1.3.0/
-Loading library /epics/modules/ADSupport/1.3.0/R3.15.5/lib/linux-x86_64/libADSupport.so
-Loaded ADSupport version 1.3.0
+require ADSupport,1.4.0
+Module ADSupport version 1.4.0 found in /testing/epics/base-3.15.5/require/0.0.0/siteMods/ADSupport/1.4.0/
+Loading library /testing/epics/base-3.15.5/require/0.0.0/siteMods/ADSupport/1.4.0/lib/linux-x86_64/libADSupport.so
+Loaded ADSupport version 1.4.0
 ADSupport has no dbd file
+Loading module info records for ADSupport
+
 ...
+iocInit
+Starting iocInit
 ############################################################################
 ## EPICS R3.15.5-EEE-3.15.5-patch
-## EPICS Base built Jan 10 2018
+## EPICS Base built Feb 21 2018
 ############################################################################
-iocRun: All initialization complete
 
 ```
 
