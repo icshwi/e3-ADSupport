@@ -1,0 +1,31 @@
+#ADSupport module configuration
+
+
+WITH_NETCDF0:=YES
+
+
+WITH_JPEG:=NO
+WITH_ZLIB:=NO
+
+# Dependent upon ZLIB 
+WITH_TIFF:=NO
+WITH_XML2:=NO
+WITH_GRAPHICSMAGICK:=NO
+
+WITH_SZIP:=NO
+WITH_HDF5:=NO
+WITH_NEXUS:=NO
+
+
+# Somehow WITH_NETCDF cannot be shown in make env
+export WITH_NETCDF0
+export WITH_JPEG
+export WITH_ZLIB
+export WITH_TIFF
+export WITH_SZIP
+export WITH_HDF5
+export WITH_NEXUS
+
+
+export WITH_XML2
+export WITH_GRAPHICSMAGICK

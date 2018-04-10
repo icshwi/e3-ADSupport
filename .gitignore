@@ -12,3 +12,10 @@ core.*
 .settings
 .cproject
 .project
+*.local
+*~
+\#*
+*-dev
+.cvsignore
+*_old/
+.\#*
