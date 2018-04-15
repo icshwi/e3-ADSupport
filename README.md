@@ -27,6 +27,7 @@ $ git clone https://github.com/icshwi/e3-ADSupport.git
 $ cd e3-ADSupport
 $ git checkout target_path_test
 $ make init
+$ make patch
 $ make build
 $ make install 
 ```
