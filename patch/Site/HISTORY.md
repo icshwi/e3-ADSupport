@@ -1,4 +1,4 @@
-# 01_tiff_extern_rename.p0.patch
+# 1.4.0-tiff_extern_rename.p0.patch
 
 The same EXTERN exists in jpegSrc and tiffSrc. Decided to create a patch for tiffSrc
 
