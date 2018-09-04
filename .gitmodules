@@ -1,4 +1,4 @@
 [submodule "ADSupport"]
 	path = ADSupport
 	url = https://github.com/areaDetector/ADSupport
-	ignore = all
+	ignore = dirty
