@@ -1,9 +1,8 @@
 #ADSupport module configuration
 
-
-
 WITH_NETCDF:=YES
 WITH_JPEG:=YES
+JPEG_EXTERNAL:=YES
 WITH_ZLIB:=YES
 WITH_SZIP:=YES
 
