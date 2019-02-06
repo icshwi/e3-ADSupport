@@ -17,10 +17,11 @@
 # 
 # Author  : williamledda
 #           Jeong Han Lee
+#           Wayne Lewis
 # email   : williamledda@esss.se
 #           jeonghan.lee@gmail.com
-# Date    : Thursday, September 13 22:35:06 CEST 2018
-# version : 0.0.1
+# Date    : Wednesday, February  6 22:54:35 CET 2019
+# version : 0.0.2
 
 where_am_I := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 include $(E3_REQUIRE_TOOLS)/driver.makefile
@@ -1440,7 +1441,7 @@ endif # ($(WITH_ZLIB),YES)
 
 
 ifeq ($(WITH_JPEG),YES)
-#ifeq ($(JPEG_EXTERNAL),NO)
+ifeq ($(JPEG_EXTERNAL),NO)
 USR_INCLUDES += -I$(where_am_I)$(JPEG_DIR)/$(OS_LINUX)
 USR_INCLUDES += -I$(where_am_I)$(JPEG_DIR)/$(OS_DEF)
 
@@ -1495,7 +1496,8 @@ SOURCES += $(JPEG_DIR)/jquant2.c
 SOURCES += $(JPEG_DIR)/jutils.c 
 SOURCES += $(JPEG_DIR)/jmemmgr.c
 SOURCES += $(JPEG_DIR)/jmemnobs.c
-#endif # ($(JPEG_EXTERNAL),NO)
+endif # ($(JPEG_EXTERNAL),NO)
+LIB_SYS_LIBS += jpeg
 endif # ($(WITH_JPEG),YES)
 
 
@@ -1542,6 +1544,7 @@ endif # ($(WITH_NETCDF),YES)
 
 
 # db rule is the default in RULES_E3, so add the empty one
+.PHONY: db
 
 db:
 #

@@ -12,7 +12,6 @@ E3_MODULE_MAKEFILE:=$(EPICS_MODULE_NAME).Makefile
 #
 E3_MODULE_DEV_GITURL:="https://github.com/areaDetector/ADSupport"
 #
--include $(TOP)/configure/CONFIG_OPTIONS
-# The definitions shown below can also be placed in an untracked CONFIG_MODULE*.local
+# The definitions shown below can also be placed in an untracked CONFIG_MODULE_DEV.local
 -include $(TOP)/configure/CONFIG_MODULE_DEV.local
 #
