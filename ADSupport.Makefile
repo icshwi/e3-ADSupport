@@ -1,4 +1,5 @@
 #
+#  Copyright (c) 2019            Jeong Han Lee
 #  Copyright (c) 2017 - Present  European Spallation Source ERIC
 #
 #  The program is free software: you can redistribute
@@ -20,14 +21,14 @@
 #           Wayne Lewis
 # email   : williamledda@esss.se
 #           jeonghan.lee@gmail.com
-# Date    : Wednesday, February  6 22:54:35 CET 2019
-# version : 0.0.2
+# Date    : Thursday, March 28 22:24:12 CET 2019
+# version : 0.0.3
 
 where_am_I := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 include $(E3_REQUIRE_TOOLS)/driver.makefile
 include $(E3_REQUIRE_CONFIG)/DECOUPLE_FLAGS
 
-EXCLUDE_ARCHS += linux-ppc64e6500
+#EXCLUDE_ARCHS += linux-ppc64e6500
 
 
 
