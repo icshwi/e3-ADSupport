@@ -28,9 +28,6 @@ where_am_I := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 include $(E3_REQUIRE_TOOLS)/driver.makefile
 include $(E3_REQUIRE_CONFIG)/DECOUPLE_FLAGS
 
-#EXCLUDE_ARCHS += linux-ppc64e6500
-
-
 
 APPS:=supportApp
 
@@ -1442,7 +1439,7 @@ endif # ($(WITH_ZLIB),YES)
 
 
 ifeq ($(WITH_JPEG),YES)
-ifeq ($(JPEG_EXTERNAL),NO)
+ifeq ($(WITH_JPEG_EXTERNAL),NO)
 USR_INCLUDES += -I$(where_am_I)$(JPEG_DIR)/$(OS_LINUX)
 USR_INCLUDES += -I$(where_am_I)$(JPEG_DIR)/$(OS_DEF)
 
@@ -1497,7 +1494,7 @@ SOURCES += $(JPEG_DIR)/jquant2.c
 SOURCES += $(JPEG_DIR)/jutils.c 
 SOURCES += $(JPEG_DIR)/jmemmgr.c
 SOURCES += $(JPEG_DIR)/jmemnobs.c
-endif # ($(JPEG_EXTERNAL),NO)
+endif # ($(WITH_JPEG_EXTERNAL),NO)
 LIB_SYS_LIBS += jpeg
 endif # ($(WITH_JPEG),YES)
 

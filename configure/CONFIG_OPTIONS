@@ -1,8 +1,10 @@
 #ADSupport module configuration
-
+# WITH_ is mandatory in order to export these variables to *.Makefile
+# RULE_EXPORT will export WITH_* variables automatically
+# 
 WITH_NETCDF:=YES
 WITH_JPEG:=YES
-JPEG_EXTERNAL:=YES
+WITH_JPEG_EXTERNAL:=YES
 WITH_ZLIB:=YES
 WITH_SZIP:=YES
 
@@ -18,6 +20,8 @@ WITH_BLOSC:=YES
 ## One should use the external libraries instead of ADSupport
 
 # XML2 depends on ZLIB, so WITH_ZLIB:=YES
+# WITH_XML2:=YES : External (system xml2) will be used
+# WITH_XML2:=NO  : ADSupport xml2 will be used
 WITH_XML2:=NO
 # GRAPHICSMAGICK depends on ZLIB, TIFF, XML2, JPEG
 WITH_GRAPHICSMAGICK:=NO
