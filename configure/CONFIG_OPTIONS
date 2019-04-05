@@ -51,6 +51,6 @@ WITH_NEXUS:=YES
 -include $(TOP)/configure/CONFIG_OPTIONS.local
 
 # It can be removed one year later, because _EXTERNAL was added to require global
-#EXPORT_VARS+=$(filter %_EXTERNAL%,$(.VARIABLES))
+EXPORT_VARS+=$(filter %_EXTERNAL%,$(.VARIABLES))
 EXPORT_VARS+=BLOSC_SSE2
 EXPORT_VARS+=BLOSC_AVX2
