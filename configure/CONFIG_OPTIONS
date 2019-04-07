@@ -1,11 +1,18 @@
+## Please DO NOT CHANGE the following options.
+## It is not easy to handle all dependency libraries with all possible options.
+## We have to use few limited options for ADSupport.
+## If one needs more complicated one, please contact han.lee@esss.se
+##
 ##
 WITH_NETCDF:=YES
-NETCDF_EXTERNAL:=NO
 ##
 ##
 ##
 WITH_JPEG:=YES
-JPEG_EXTERNAL:=YES
+## We can use ONLY JPEG_EXTERNAL:=YES NOW
+##
+#JPEG_EXTERNAL:=YES
+JPEG_EXTERNAL:=NO
 ##
 ##
 ##
@@ -28,25 +35,26 @@ WITH_BLOSC:=YES
 # in ADSupport.Makefile
 #
 WITH_TIFF0:=YES
-TIFF_EXTERNAL:=NO
 ##
 ##
 ##
-# XML2 MUST BE EXTERNAL
-# XML2_EXTERNAL:=YES
+## We don't use XML2 in ADSupport
+## USE the system library libxml2
 ##
 ##
 ##
 WITH_SZIP:=YES
-SZIP_EXTERNAL:=NO
 ##
 ##
 ##
-# HDF5 depends on SZIP, ZLIB, BLOSC
 WITH_HDF5:=YES
-#
+##
+##
+##
 WITH_NEXUS:=YES
-
+##
+##
+##
 
 # The definitions shown below can also be placed in an untracked CONFIG_OPTIONS.local
 -include $(TOP)/configure/CONFIG_OPTIONS.local

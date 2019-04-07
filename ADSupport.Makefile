@@ -17,8 +17,8 @@
 # 
 # Author  : Jeong Han Lee
 # email   : jeonghan.lee@gmail.com
-# Date    : Thursday, April  4 20:48:35 CEST 2019
-# version : 0.0.1
+# Date    : Monday, April  8 00:55:08 CEST 2019
+# version : 0.0.2
 #
 
 ## The following lines are mandatory, please don't change them.
@@ -501,6 +501,7 @@ endif # ($(WITH_HDF5),YES)
 
 
 ifeq ($(WITH_SZIP),YES)
+SZIP_EXTERNAL:=NO
 ifeq ($(SZIP_EXTERNAL),NO)
 
 
@@ -650,6 +651,7 @@ endif # ($(XML2_EXTERNAL),NO)
 
 
 ifeq ($(WITH_TIFF0),YES)
+TIFF_EXTERNAL:=NO
 ifeq ($(TIFF_EXTERNAL),NO)
 
 TIFFTOP = $(APP)/tiffSrc
@@ -874,18 +876,25 @@ SOURCES += $(JPEGTOP)/jquant2.c
 SOURCES += $(JPEGTOP)/jutils.c 
 SOURCES += $(JPEGTOP)/jmemmgr.c
 SOURCES += $(JPEGTOP)/jmemnobs.c
-
+else
+# We have to combine libADSupport with libjpeg, so
+# we need to add them here if you do use EXTERNAL JPEG
+# 
+LIB_SYS_LIBS += jpeg
+ifeq ($(T_A),linux-x86_64)
+USR_INCLUDES += -I/usr/include
+else
+USR_INCLUDES += -I$(SDKTARGETSYSROOT)/usr/include
+endif
 endif # ($(JPEG_EXTERNAL),NO)
 endif # ($(WITH_JPEG),YES)
 
 
 ifeq ($(WITH_NETCDF),YES)
+NETCDF_EXTERNAL:=NO
 ifeq ($(NETCDF_EXTERNAL),NO)
 
-
-
 NETCDFTOP = $(APP)/netCDFSrc
-
 
 USR_INCLUDES += -I$(where_am_I)$(NETCDFTOP)/inc
 USR_INCLUDES += -I$(where_am_I)$(NETCDFTOP)/libsrc

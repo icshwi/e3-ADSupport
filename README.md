@@ -18,15 +18,12 @@ This is the ESS customized single library (ADSupport) in order to integrate ADCo
 If one would like to use xml2 within CentOS (of course libxml2 package should be installed), or ESS Yocto Linux, one should use the following configuration in each module makefile. 
 
 ```
-ifeq ($(T_A),linux-ppc64e6500)
-USR_INCLUDES += -I$(SDKTARGETSYSROOT)/usr/include/libxml2
-else ifeq ($(T_A),linux-corei7-poky)
-USR_INCLUDES += -I$(SDKTARGETSYSROOT)/usr/include/libxml2
-else
-USR_INCLUDES += -I/usr/include/libxml2
-endif
-
 LIB_SYS_LIBS += xml2	
+ifeq ($(T_A),linux-x86_64)
+USR_INCLUDES += -I/usr/include/libxml2
+else
+USR_INCLUDES += -I$(SDKTARGETSYSROOT)/usr/include/libxml2
+endif
 ```
 
 ## NOT Test GraphicsMagick 
