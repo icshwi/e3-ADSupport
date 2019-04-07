@@ -26,9 +26,6 @@ where_am_I := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 include $(E3_REQUIRE_TOOLS)/driver.makefile
 include $(E3_REQUIRE_CONFIG)/DECOUPLE_FLAGS
 
-# EXCLUDE_ARCHS += linux-ppc64e6500
-# EXCLUDE_ARCHS += linux-corei7-poky
-
 
 APP:=supportApp
 
@@ -652,7 +649,7 @@ endif # ($(XML2_EXTERNAL),NO)
 
 
 
-ifeq ($(WITH_TIFF),YES)
+ifeq ($(WITH_TIFF0),YES)
 ifeq ($(TIFF_EXTERNAL),NO)
 
 TIFFTOP = $(APP)/tiffSrc
@@ -710,7 +707,7 @@ SOURCES += $(TIFFTOP)/tif_zip.c
 SOURCES += $(TIFFTOP)/tif_unix.c
 
 endif # ($(TIFF_EXTERNAL),NO)
-endif # ($(WITH_TIFF),YES)
+endif # ($(WITH_TIFF0),YES)
 
 
 

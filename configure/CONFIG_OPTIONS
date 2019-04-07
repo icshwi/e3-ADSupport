@@ -23,8 +23,12 @@ WITH_BLOSC:=YES
 ##
 ##
 # TIFF depends on ZLIB, so WITH_ZLIB:=YES
-WITH_TIFF:=YES
-##TIFF_EXTERNAL:=NO
+# WITH_TIFF cannot be real variable due to unknown reasons
+# So, have to change it to WITH_TIFF0, which is also defined
+# in ADSupport.Makefile
+#
+WITH_TIFF0:=YES
+TIFF_EXTERNAL:=NO
 ##
 ##
 ##
@@ -42,9 +46,6 @@ SZIP_EXTERNAL:=NO
 WITH_HDF5:=YES
 #
 WITH_NEXUS:=YES
-
-
-#WITH_GRAPHICSMAGICK:=NO
 
 
 # The definitions shown below can also be placed in an untracked CONFIG_OPTIONS.local
