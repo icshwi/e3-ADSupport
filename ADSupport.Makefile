@@ -17,8 +17,8 @@
 # 
 # Author  : Jeong Han Lee
 # email   : jeonghan.lee@gmail.com
-# Date    : Monday, April  8 00:55:08 CEST 2019
-# version : 0.0.2
+# Date    : Monday, April 15 13:55:33 CEST 2019
+# version : 0.0.3
 #
 
 ## The following lines are mandatory, please don't change them.
@@ -538,112 +538,112 @@ endif # ($(WITH_SZIP),YES)
 ###
 XML2_EXTERNAL:=YES
 ifeq ($(XML2_EXTERNAL),NO)
-XML2 = $(APP)/xml2Src
+XML2TOP = $(APP)/xml2Src
 
 # Need _REENTRANT flag on Linux for threads to build correctly
 USR_CFLAGS_Linux += -D_REENTRANT
 
-USR_INCLUDES += -I$(where_am_I)$(XML2)
-USR_INCLUDES += -I$(where_am_I)$(XML2)/$(OS_Linux)
-USR_INCLUDES += -I$(where_am_I)$(XML2)/$(OS_default)/libxml
+USR_INCLUDES += -I$(where_am_I)$(XML2TOP)
+USR_INCLUDES += -I$(where_am_I)$(XML2TOP)/$(OS_Linux)
+USR_INCLUDES += -I$(where_am_I)$(XML2TOP)/$(OS_default)/libxml
 
-HEADERS += $(XML2)/$(OS_Linux)/config_32.h
-HEADERS += $(XML2)/$(OS_Linux)/config_64.h
+HEADERS += $(XML2TOP)/$(OS_Linux)/config_32.h
+HEADERS += $(XML2TOP)/$(OS_Linux)/config_64.h
 
-HEADERS += $(XML2)/$(OS_default)/libxml/DOCBparser.h 
-HEADERS += $(XML2)/$(OS_default)/libxml/globals.h 
-HEADERS += $(XML2)/$(OS_default)/libxml/tree.h
-HEADERS += $(XML2)/$(OS_default)/libxml/xmlregexp.h
-HEADERS += $(XML2)/$(OS_default)/libxml/HTMLparser.h
-HEADERS += $(XML2)/$(OS_default)/libxml/HTMLtree.h
-HEADERS += $(XML2)/$(OS_default)/libxml/SAX.h
-HEADERS += $(XML2)/$(OS_default)/libxml/SAX2.h
-HEADERS += $(XML2)/$(OS_default)/libxml/c14n.h
-HEADERS += $(XML2)/$(OS_default)/libxml/catalog.h
-HEADERS += $(XML2)/$(OS_default)/libxml/chvalid.h
-HEADERS += $(XML2)/$(OS_default)/libxml/debugXML.h
-HEADERS += $(XML2)/$(OS_default)/libxml/dict.h
-HEADERS += $(XML2)/$(OS_default)/libxml/encoding.h
-HEADERS += $(XML2)/$(OS_default)/libxml/entities.h
-HEADERS += $(XML2)/$(OS_default)/libxml/hash.h
-HEADERS += $(XML2)/$(OS_default)/libxml/list.h
-HEADERS += $(XML2)/$(OS_default)/libxml/nanoftp.h
-HEADERS += $(XML2)/$(OS_default)/libxml/nanohttp.h
-HEADERS += $(XML2)/$(OS_default)/libxml/parser.h
-HEADERS += $(XML2)/$(OS_default)/libxml/parserInternals.h
-HEADERS += $(XML2)/$(OS_default)/libxml/pattern.h
-HEADERS += $(XML2)/$(OS_default)/libxml/relaxng.h
-HEADERS += $(XML2)/$(OS_default)/libxml/schemasInternals.h
-HEADERS += $(XML2)/$(OS_default)/libxml/schematron.h
-HEADERS += $(XML2)/$(OS_default)/libxml/threads.h
-HEADERS += $(XML2)/$(OS_default)/libxml/uri.h
-HEADERS += $(XML2)/$(OS_default)/libxml/valid.h
-HEADERS += $(XML2)/$(OS_default)/libxml/xinclude.h
-HEADERS += $(XML2)/$(OS_default)/libxml/xlink.h
-HEADERS += $(XML2)/$(OS_default)/libxml/xmlIO.h
-HEADERS += $(XML2)/$(OS_default)/libxml/xmlautomata.h
-HEADERS += $(XML2)/$(OS_default)/libxml/xmlerror.h
-HEADERS += $(XML2)/$(OS_default)/libxml/xmlexports.h
-HEADERS += $(XML2)/$(OS_default)/libxml/xmlmemory.h
-HEADERS += $(XML2)/$(OS_default)/libxml/xmlreader.h
-HEADERS += $(XML2)/$(OS_default)/libxml/xmlsave.h
-HEADERS += $(XML2)/$(OS_default)/libxml/xmlschemas.h
-HEADERS += $(XML2)/$(OS_default)/libxml/xmlschemastypes.h
-HEADERS += $(XML2)/$(OS_default)/libxml/xpointer.h
-HEADERS += $(XML2)/$(OS_default)/libxml/xmlstring.h
-HEADERS += $(XML2)/$(OS_default)/libxml/xmlunicode.h
-HEADERS += $(XML2)/$(OS_default)/libxml/xmlversion.h
-HEADERS += $(XML2)/$(OS_default)/libxml/xmlwriter.h
-HEADERS += $(XML2)/$(OS_default)/libxml/xpath.h
-HEADERS += $(XML2)/$(OS_default)/libxml/xpathInternals.h
-HEADERS += $(XML2)/$(OS_default)/libxml/xmlmodule.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/DOCBparser.h 
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/globals.h 
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/tree.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/xmlregexp.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/HTMLparser.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/HTMLtree.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/SAX.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/SAX2.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/c14n.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/catalog.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/chvalid.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/debugXML.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/dict.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/encoding.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/entities.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/hash.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/list.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/nanoftp.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/nanohttp.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/parser.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/parserInternals.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/pattern.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/relaxng.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/schemasInternals.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/schematron.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/threads.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/uri.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/valid.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/xinclude.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/xlink.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/xmlIO.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/xmlautomata.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/xmlerror.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/xmlexports.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/xmlmemory.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/xmlreader.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/xmlsave.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/xmlschemas.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/xmlschemastypes.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/xpointer.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/xmlstring.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/xmlunicode.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/xmlversion.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/xmlwriter.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/xpath.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/xpathInternals.h
+HEADERS += $(XML2TOP)/$(OS_default)/libxml/xmlmodule.h
 
 
 
-SOURCES += $(XML2)/buf.c
-SOURCES += $(XML2)/c14n.c
-SOURCES += $(XML2)/catalog.c
-SOURCES += $(XML2)/chvalid.c
-SOURCES += $(XML2)/debugXML.c
-SOURCES += $(XML2)/dict.c
-SOURCES += $(XML2)/DOCBparser.c
-SOURCES += $(XML2)/encoding.c
-SOURCES += $(XML2)/entities.c
-SOURCES += $(XML2)/error.c
-SOURCES += $(XML2)/globals.c
-SOURCES += $(XML2)/hash.c
-SOURCES += $(XML2)/HTMLparser.c
-SOURCES += $(XML2)/HTMLtree.c
-SOURCES += $(XML2)/legacy.c
-SOURCES += $(XML2)/list.c
-SOURCES += $(XML2)/nanoftp.c
-SOURCES += $(XML2)/nanohttp.c
-SOURCES += $(XML2)/parser.c
-SOURCES += $(XML2)/parserInternals.c
-SOURCES += $(XML2)/pattern.c
-SOURCES += $(XML2)/relaxng.c
-SOURCES += $(XML2)/SAX2.c
-SOURCES += $(XML2)/SAX.c
-SOURCES += $(XML2)/schematron.c
-SOURCES += $(XML2)/threads.c
-SOURCES += $(XML2)/tree.c
-SOURCES += $(XML2)/uri.c
-SOURCES += $(XML2)/valid.c
-SOURCES += $(XML2)/xinclude.c
-SOURCES += $(XML2)/xlink.c
-SOURCES += $(XML2)/xmlIO.c
-SOURCES += $(XML2)/xmlmemory.c
-SOURCES += $(XML2)/xmlreader.c
-SOURCES += $(XML2)/xmlregexp.c
-SOURCES += $(XML2)/xmlmodule.c
-SOURCES += $(XML2)/xmlsave.c
-SOURCES += $(XML2)/xmlschemas.c
-SOURCES += $(XML2)/xmlschemastypes.c
-SOURCES += $(XML2)/xmlunicode.c
-SOURCES += $(XML2)/xmlwriter.c
-SOURCES += $(XML2)/xpath.c
-SOURCES += $(XML2)/xpointer.c
-SOURCES += $(XML2)/xmlstring.c
+SOURCES += $(XML2TOP)/buf.c
+SOURCES += $(XML2TOP)/c14n.c
+SOURCES += $(XML2TOP)/catalog.c
+SOURCES += $(XML2TOP)/chvalid.c
+SOURCES += $(XML2TOP)/debugXML.c
+SOURCES += $(XML2TOP)/dict.c
+SOURCES += $(XML2TOP)/DOCBparser.c
+SOURCES += $(XML2TOP)/encoding.c
+SOURCES += $(XML2TOP)/entities.c
+SOURCES += $(XML2TOP)/error.c
+SOURCES += $(XML2TOP)/globals.c
+SOURCES += $(XML2TOP)/hash.c
+SOURCES += $(XML2TOP)/HTMLparser.c
+SOURCES += $(XML2TOP)/HTMLtree.c
+SOURCES += $(XML2TOP)/legacy.c
+SOURCES += $(XML2TOP)/list.c
+SOURCES += $(XML2TOP)/nanoftp.c
+SOURCES += $(XML2TOP)/nanohttp.c
+SOURCES += $(XML2TOP)/parser.c
+SOURCES += $(XML2TOP)/parserInternals.c
+SOURCES += $(XML2TOP)/pattern.c
+SOURCES += $(XML2TOP)/relaxng.c
+SOURCES += $(XML2TOP)/SAX2.c
+SOURCES += $(XML2TOP)/SAX.c
+SOURCES += $(XML2TOP)/schematron.c
+SOURCES += $(XML2TOP)/threads.c
+SOURCES += $(XML2TOP)/tree.c
+SOURCES += $(XML2TOP)/uri.c
+SOURCES += $(XML2TOP)/valid.c
+SOURCES += $(XML2TOP)/xinclude.c
+SOURCES += $(XML2TOP)/xlink.c
+SOURCES += $(XML2TOP)/xmlIO.c
+SOURCES += $(XML2TOP)/xmlmemory.c
+SOURCES += $(XML2TOP)/xmlreader.c
+SOURCES += $(XML2TOP)/xmlregexp.c
+SOURCES += $(XML2TOP)/xmlmodule.c
+SOURCES += $(XML2TOP)/xmlsave.c
+SOURCES += $(XML2TOP)/xmlschemas.c
+SOURCES += $(XML2TOP)/xmlschemastypes.c
+SOURCES += $(XML2TOP)/xmlunicode.c
+SOURCES += $(XML2TOP)/xmlwriter.c
+SOURCES += $(XML2TOP)/xpath.c
+SOURCES += $(XML2TOP)/xpointer.c
+SOURCES += $(XML2TOP)/xmlstring.c
 
 endif # ($(XML2_EXTERNAL),NO)
 
@@ -830,6 +830,8 @@ HEADERS += $(JPEGTOP)/$(OS_Linux)/jconfig.h
 HEADERS += $(JPEGTOP)/$(OS_Linux)/jmorecfg.h 
 HEADERS += $(JPEGTOP)/$(OS_default)/jerror.h 
 
+
+
 SOURCES += $(JPEGTOP)/jaricom.c 
 SOURCES += $(JPEGTOP)/jcapimin.c 
 SOURCES += $(JPEGTOP)/jcapistd.c 
@@ -876,6 +878,9 @@ SOURCES += $(JPEGTOP)/jquant2.c
 SOURCES += $(JPEGTOP)/jutils.c 
 SOURCES += $(JPEGTOP)/jmemmgr.c
 SOURCES += $(JPEGTOP)/jmemnobs.c
+
+SOURCES += $(JPEGTOP)/decompressJPEG.c
+
 else
 # We have to combine libADSupport with libjpeg, so
 # we need to add them here if you do use EXTERNAL JPEG

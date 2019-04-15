@@ -18,8 +18,8 @@
 #
 #   author  : Jeong Han Lee
 #   email   : jeonghan.lee@gmail.com
-#   date    : Monday, April 15 01:03:59 CEST 2019
-#   version : 0.0.1
+#   date    : Monday, April 15 13:55:53 CEST 2019
+#   version : 0.0.2
 
 
 declare -gr SC_SCRIPT="$(realpath "$0")"
@@ -31,15 +31,17 @@ declare -gr SC_LOGDATE="$(date +%y%m%d%H%M)"
 
 function hdr_src_compare
 {
+    local e3_top=$1;shift;
     local epics_src_top=$1; shift;
     local e3_makefile_src_top_string=$1; shift;
+    
     local appendix="<epics   >e3";
     
 
-    HDR_DIFF=$(diff <(cat ${epics_src_top}/Makefile |grep "INC +="  | rev | cut -d'=' -f 1 | rev | sed -e 's/^[[:space:]]*//') <(cat *.Makefile |grep "HEARDERS += \$($e3_makefile_src_top_string)" | rev | cut -d'/' -f 1 | rev |sed -e 's/^[[:space:]]*//'))
+    HDR_DIFF=$(diff <(cat ${epics_src_top}/Makefile |grep -e "INC +=" -e "INC_Linux +="  | rev | cut -d'=' -f 1 | rev | sed -e 's/^[[:space:]]*//') <(cat ${e3_top}/*.Makefile |grep "HEADERS += \$($e3_makefile_src_top_string)" | rev | cut -d'/' -f 1 | rev |sed -e 's/^[[:space:]]*//'))
 
     
-    SRC_DIFF=$(diff <(cat ${epics_src_top}/Makefile |grep "SRCS +=" | rev | cut -d'=' -f 1 | rev | sed -e 's/^[[:space:]]*//') <(cat *.Makefile |grep "SOURCES += \$($e3_makefile_src_top_string)" | rev | cut -d'/' -f 1 | rev |sed -e 's/^[[:space:]]*//'))
+    SRC_DIFF=$(diff <(cat ${epics_src_top}/Makefile |grep -e "SRCS +=" -e "SRCS_Linux +=" | rev | cut -d'=' -f 1 | rev | sed -e 's/^[[:space:]]*//') <(cat ${e3_top}/*.Makefile |grep "SOURCES += \$($e3_makefile_src_top_string)" | rev | cut -d'/' -f 1 | rev |sed -e 's/^[[:space:]]*//'))
     
     if [ "$HDR_DIFF" ]; then
 	printf "\n"
@@ -61,25 +63,24 @@ function hdr_src_compare
 }
 
 
-TOP=${PWD}
+TOP=${SC_TOP}/..
 APPTOP=${TOP}/ADSupport/supportApp
 
+hdr_src_compare "${TOP}" "${APPTOP}/bloscSrc/"   "BLOSCTOP"
+hdr_src_compare "${TOP}" "${APPTOP}/hdf5_hlSrc/" "HDF5HLTOP"
+hdr_src_compare "${TOP}" "${APPTOP}/hdf5Src/"    "HDF5TOP"
+hdr_src_compare "${TOP}" "${APPTOP}/jpegSrc/"    "JPEGTOP"
+hdr_src_compare "${TOP}" "${APPTOP}/netCDFSrc/"  "NETCDFTOP"
+hdr_src_compare "${TOP}" "${APPTOP}/nexusSrc/"   "NEXUSTOP"
+hdr_src_compare "${TOP}" "${APPTOP}/szipSrc/"    "SZIPTOP"
+hdr_src_compare "${TOP}" "${APPTOP}/tiffSrc/"    "TIFFTOP"
+hdr_src_compare "${TOP}" "${APPTOP}/zlibSrc/"    "ZLIBTOP"
+
+# #hdr_src_compare "${APPTOP}/hdf5PluginSrc/" "HDF5HLTOPNETCDFTOP"
+# #hdr_src_compare "${APPTOP}/xml2Src/" "XML2TOP"
 # #hdr_src_compare "${APPTOP}/bitshuffleSrc/" "NETCDFTOP"
-hdr_src_compare "${APPTOP}/bloscSrc/" "BLOSCTOP"
 # #hdr_src_compare "${APPTOP}/cbfSrc/" "NETCDFTOP"
 # #hdr_src_compare "${APPTOP}/GraphicsMagickSrc/" "GMTOP"
-hdr_src_compare "${APPTOP}/hdf5_hlSrc/" "HDF5HLTOP"
-#hdr_src_compare "${APPTOP}/hdf5PluginSrc/" "HDF5HLTOPNETCDFTOP"
-hdr_src_compare "${APPTOP}/hdf5Src/" "HDF5TOP"
-hdr_src_compare "${APPTOP}/jpegSrc/" "JPEGTOP"
-hdr_src_compare "${APPTOP}/netCDFSrc/" "NETCDFTOP"
-hdr_src_compare "${APPTOP}/nexusSrc/" "NEXUSTOP"
-hdr_src_compare "${APPTOP}/szipSrc/" "SZIPTOP"
-hdr_src_compare "${APPTOP}/tiffSrc/" "TIFFTOP"
-# #hdr_src_compare "${APPTOP}/xml2Src/" "XML2"
-hdr_src_compare "${APPTOP}/zlibSrc/" "ZLIBTOP"
-
-
 
 
 
