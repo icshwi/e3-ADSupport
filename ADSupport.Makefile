@@ -135,6 +135,24 @@ SOURCES += $(HDF5HLTOP)/H5LTparse.c
 SOURCES += $(HDF5HLTOP)/H5PT.c
 SOURCES += $(HDF5HLTOP)/H5TB.c
 
+HDF5PLUGINTOP = $(APP)/hdf5PluginSrc
+
+USR_CFLAGS_Linux += -std=c99
+ifeq ($(WITH_BLOSC),YES)
+SOURCES += $(HDF5PLUGINTOP)/blosc_filter.c
+SOURCES += $(HDF5PLUGINTOP)/blosc_plugin.c
+USR_CFLAGS += -DH5_HAVE_FILTER_BLOSC
+endif
+
+ifeq ($(WITH_BITSHUFFLE),YES)
+SOURCES += $(HDF5PLUGINTOP)/bshuf_h5filter.c
+SOURCES += $(HDF5PLUGINTOP)/bshuf_h5plugin.c
+SOURCES += $(HDF5PLUGINTOP)/H5Zlz4.c
+SOURCES += $(HDF5PLUGINTOP)/lz4_h5plugin.c
+USR_CFLAGS += -DH5_HAVE_FILTER_LZ4
+USR_CFLAGS += -DH5_HAVE_FILTER_BSHUF
+
+endif
 
 
 HDF5TOP = $(APP)/hdf5Src
@@ -188,8 +206,12 @@ HEADERS += $(HDF5TOP)/$(OS_default)/H5version.h
 HEADERS += $(HDF5TOP)/$(OS_default)/H5Zpublic.h
 
 HEADERS += $(HDF5TOP)/$(OS_default)/hdf5.h
-
 HEADERS += $(HDF5TOP)/$(OS_Linux)/H5pubconf.h
+
+HEADERS += $(HDF5TOP)/blosc_filter.h
+HEADERS += $(HDF5TOP)/lz4_h5filter.h
+HEADERS += $(HDF5TOP)/bshuf_h5filter.h
+
 HEADERS += $(HDF5TOP)/$(OS_Linux)/H5pubconf_32.h
 HEADERS += $(HDF5TOP)/$(OS_Linux)/H5pubconf_64.h
 
@@ -486,6 +508,12 @@ USR_CFLAGS += -DH5_HAVE_FILTER_BLOSC
 SOURCES += $(HDF5TOP)/blosc_filter.c
 endif
 
+ifeq ($(WITH_BITSHUFFLE),YES)
+USR_CFLAGS += -DH5_HAVE_FILTER_BSHUF
+USR_CFLAGS += -DH5_HAVE_FILTER_LZ4
+SOURCES += $(HDF5TOP)/bshuf_h5filter.c
+SOURCES += $(HDF5TOP)/H5Zlz4.c
+endif
 
 SOURCES += $(HDF5TOP)/H5detect.c
 
@@ -497,6 +525,24 @@ endif # ($(WITH_HDF5),YES)
 
 
 
+ifeq ($(WITH_BITSHUFFLE),YES)
+BITSHUFFLE_EXTERNAL:=NO
+ifeq ($(BITSHUFFLE_EXTERNAL),NO)
+
+BITSHUFFLETOP = $(APP)/bitshuffleSrc
+
+HEADERS += $(BITSHUFFLETOP)/bitshuffle.h
+HEADERS += $(BITSHUFFLETOP)/bitshuffle_core.h
+
+SOURCES += $(BITSHUFFLETOP)/bitshuffle.c
+SOURCES += $(BITSHUFFLETOP)/bitshuffle_core.c
+SOURCES += $(BITSHUFFLETOP)/iochain.c
+
+HEADERS += $(BITSHUFFLETOP)/lz4/lz4.h
+SOURCES += $(BITSHUFFLETOP)/lz4/lz4.c
+
+endif # ($(BITSHUFFLE_EXTERNAL),NO)
+endif # ($(WITH_BITSHUFFLE),YES)
 
 
 
@@ -961,6 +1007,44 @@ SOURCES += $(NETCDFTOP)/liblib/nc_initialize.c
 
 endif # ($(NETCDF_EXTERNAL),NO)
 endif # ($(WITH_NETCDF),YES)
+
+
+CBFTOP = $(APP)/cbfSrc
+
+
+HEADERS += $(CBFTOP)/cbf_ad.h
+HEADERS += $(CBFTOP)/cbf_tree_ad.h
+HEADERS += $(CBFTOP)/cbf_context_ad.h
+HEADERS += $(CBFTOP)/cbf_file_ad.h
+HEADERS += $(CBFTOP)/global_ad.h
+HEADERS += $(CBFTOP)/md5_ad.h
+
+SOURCES += $(CBFTOP)/cbf.c
+SOURCES += $(CBFTOP)/cbf_alloc.c
+SOURCES += $(CBFTOP)/cbf_ascii.c
+SOURCES += $(CBFTOP)/cbf_binary.c
+SOURCES += $(CBFTOP)/cbf_byte_offset.c
+SOURCES += $(CBFTOP)/cbf_canonical.c
+SOURCES += $(CBFTOP)/cbf_codes.c
+SOURCES += $(CBFTOP)/cbf_compress.c
+SOURCES += $(CBFTOP)/cbf_context.c
+SOURCES += $(CBFTOP)/cbf_file.c
+SOURCES += $(CBFTOP)/cbf_getopt.c
+SOURCES += $(CBFTOP)/cbf_lex.c
+SOURCES += $(CBFTOP)/cbf_packed.c
+SOURCES += $(CBFTOP)/cbf_predictor.c
+SOURCES += $(CBFTOP)/cbf_read_binary.c
+SOURCES += $(CBFTOP)/cbf_read_mime.c
+SOURCES += $(CBFTOP)/cbf_simple.c
+SOURCES += $(CBFTOP)/cbf_string.c
+SOURCES += $(CBFTOP)/cbf_stx.c
+SOURCES += $(CBFTOP)/cbf_tree.c
+SOURCES += $(CBFTOP)/cbf_uncompressed.c
+SOURCES += $(CBFTOP)/cbf_write.c
+SOURCES += $(CBFTOP)/cbf_write_binary.c
+SOURCES += $(CBFTOP)/cbf_ws.c
+SOURCES += $(CBFTOP)/md5c.c
+
 
 
 db: 

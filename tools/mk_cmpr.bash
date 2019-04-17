@@ -65,7 +65,7 @@ function hdr_src_compare
 
 TOP=${SC_TOP}/..
 APPTOP=${TOP}/ADSupport/supportApp
-
+# ADSupport R1-6
 hdr_src_compare "${TOP}" "${APPTOP}/bloscSrc/"   "BLOSCTOP"
 hdr_src_compare "${TOP}" "${APPTOP}/hdf5_hlSrc/" "HDF5HLTOP"
 hdr_src_compare "${TOP}" "${APPTOP}/hdf5Src/"    "HDF5TOP"
@@ -75,8 +75,11 @@ hdr_src_compare "${TOP}" "${APPTOP}/nexusSrc/"   "NEXUSTOP"
 hdr_src_compare "${TOP}" "${APPTOP}/szipSrc/"    "SZIPTOP"
 hdr_src_compare "${TOP}" "${APPTOP}/tiffSrc/"    "TIFFTOP"
 hdr_src_compare "${TOP}" "${APPTOP}/zlibSrc/"    "ZLIBTOP"
+# ADSupport R1-7
+hdr_src_compare "${TOP}" "${APPTOP}/bitshuffleSrc/" "BITSHUFFLETOP"
+hdr_src_compare "${TOP}" "${APPTOP}/hdf5PluginSrc/" "HDF5PLUGINTOP"
+hdr_src_compare "${TOP}" "${APPTOP}/cbfSrc/"        "CBFTOP"
 
-# #hdr_src_compare "${APPTOP}/hdf5PluginSrc/" "HDF5HLTOPNETCDFTOP"
 # #hdr_src_compare "${APPTOP}/xml2Src/" "XML2TOP"
 # #hdr_src_compare "${APPTOP}/bitshuffleSrc/" "NETCDFTOP"
 # #hdr_src_compare "${APPTOP}/cbfSrc/" "NETCDFTOP"
