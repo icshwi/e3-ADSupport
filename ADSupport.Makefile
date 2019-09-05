@@ -32,6 +32,12 @@ APP:=supportApp
 OS_default:=os/default
 OS_Linux:=os/Linux
 
+USR_CFLAGS   += -Wno-unused-variable
+USR_CFLAGS   += -Wno-unused-function
+USR_CFLAGS   += -Wno-unused-but-set-variable
+USR_CPPFLAGS += -Wno-unused-variable
+USR_CPPFLAGS += -Wno-unused-function
+USR_CPPFLAGS += -Wno-unused-but-set-variable
 
 
 WITH_GRAPHICSMAGICK:=NO
@@ -97,7 +103,7 @@ SOURCES += $(NEXUSTOP)/stptok.c
 USR_CFLAGS += -DHDF5 -D_FILE_OFFSET_BITS=64
 
 # Travis/ubuntu 12.04 tweak: persuade the hdf5 library build to use API v18 over v16
-USR_CFLAGS += -DH5_NO_DEPRECATED_SYMBOLS -DH5Gopen_vers=2
+#USR_CFLAGS += -DH5_NO_DEPRECATED_SYMBOLS -DH5Gopen_vers=2
 
 
 endif # ($(NEXUS_EXTERNAL),NO)
@@ -109,7 +115,7 @@ endif # ($(WITH_NEXUS),YES)
 
 
 ifeq ($(WITH_HDF5),YES)
-HDF5_EXTERNAL:=NO
+HDF5_EXTERNAL:=YES
 ifeq ($(HDF5_EXTERNAL),NO)
 
 
@@ -151,7 +157,6 @@ SOURCES += $(HDF5PLUGINTOP)/H5Zlz4.c
 SOURCES += $(HDF5PLUGINTOP)/lz4_h5plugin.c
 USR_CFLAGS += -DH5_HAVE_FILTER_LZ4
 USR_CFLAGS += -DH5_HAVE_FILTER_BSHUF
-
 endif
 
 
@@ -517,8 +522,22 @@ endif
 
 SOURCES += $(HDF5TOP)/H5detect.c
 
+else # ($(HDF5_EXTERNAL),NO)
+# We have to combine libADSupport with libhdf5, so
+# we need to add them here if you do use EXTERNAL HDF5
+# We don't use the MPICH2 and OpenMPI, but use serial version
+# 
+LIB_SYS_LIBS += hdf5_serial
+LIB_SYS_LIBS += hdf5_serial_hl
+
+ifeq ($(T_A),linux-x86_64)
+USR_INCLUDES += -I/usr/include/hdf5/serial
+else
+USR_INCLUDES += -I$(SDKTARGETSYSROOT)/usr/include/hdf5/serial
+endif
 
 endif # ($(HDF5_EXTERNAL),NO)
+
 endif # ($(WITH_HDF5),YES)
 
 
@@ -530,7 +549,7 @@ BITSHUFFLE_EXTERNAL:=NO
 ifeq ($(BITSHUFFLE_EXTERNAL),NO)
 
 BITSHUFFLETOP = $(APP)/bitshuffleSrc
-
+USR_CFLAGS_Linux += -std=c99
 HEADERS += $(BITSHUFFLETOP)/bitshuffle.h
 HEADERS += $(BITSHUFFLETOP)/bitshuffle_core.h
 
@@ -697,7 +716,7 @@ endif # ($(XML2_EXTERNAL),NO)
 
 
 ifeq ($(WITH_TIFF0),YES)
-TIFF_EXTERNAL:=NO
+TIFF_EXTERNAL:=YES
 ifeq ($(TIFF_EXTERNAL),NO)
 
 TIFFTOP = $(APP)/tiffSrc
@@ -754,6 +773,17 @@ SOURCES += $(TIFFTOP)/tif_write.c
 SOURCES += $(TIFFTOP)/tif_zip.c
 SOURCES += $(TIFFTOP)/tif_unix.c
 
+else
+
+# We have to combine libADSupport with libjpeg, so
+# we need to add them here if you do use EXTERNAL JPEG
+# 
+LIB_SYS_LIBS += tiff
+ifeq ($(T_A),linux-x86_64)
+USR_INCLUDES += -I/usr/include
+else
+USR_INCLUDES += -I$(SDKTARGETSYSROOT)/usr/include
+endif
 endif # ($(TIFF_EXTERNAL),NO)
 endif # ($(WITH_TIFF0),YES)
 
@@ -863,6 +893,7 @@ endif # ($(WITH_ZLIB),YES)
 
 
 ifeq ($(WITH_JPEG),YES)
+JPEG_EXTERNAL:=YES
 ifeq ($(JPEG_EXTERNAL),NO)
 
 JPEGTOP = $(APP)/jpegSrc
@@ -942,7 +973,7 @@ endif # ($(WITH_JPEG),YES)
 
 
 ifeq ($(WITH_NETCDF),YES)
-NETCDF_EXTERNAL:=NO
+NETCDF_EXTERNAL:=YES
 ifeq ($(NETCDF_EXTERNAL),NO)
 
 NETCDFTOP = $(APP)/netCDFSrc
@@ -1005,6 +1036,18 @@ SOURCES += $(NETCDFTOP)/libdispatch/utf8proc.c
 
 SOURCES += $(NETCDFTOP)/liblib/nc_initialize.c
 
+
+else
+
+# We have to combine libADSupport with libjpeg, so
+# we need to add them here if you do use EXTERNAL JPEG
+# 
+LIB_SYS_LIBS += netcdf
+ifeq ($(T_A),linux-x86_64)
+USR_INCLUDES += -I/usr/include
+else
+USR_INCLUDES += -I$(SDKTARGETSYSROOT)/usr/include
+endif
 endif # ($(NETCDF_EXTERNAL),NO)
 endif # ($(WITH_NETCDF),YES)
 

@@ -1,20 +1,22 @@
 # e3-ADSupport
 
-This is the ESS customized single library (ADSupport) in order to integrate ADCore and others modules. However, due to E3 building system, we cannot use them as a single module. Thus, in order to keep a single module, we have to exclude the following two libraries support from ADSupport: `xml2` and `GraphicsMagick`
+This is the ESS customized single library (ADSupport) in order to integrate ADCore and others modules. However, due to E3 building system, we cannot use them as a single module due to the E3 building system and its compilicated dependency within ADSupport. Thus, in order to keep a single module, we have to exclude the following two libraries support from ADSupport: `xml2` and `GraphicsMagick`
 
 
 ## Support Libraries as the e3 ADSupport module
 
 * netCDF
-* jpeg
 * zlib
 * szip
-* tiff
 * blosc
-* hdf5 and hdf5_hl
 * nexus
 
 ## External Library 
+
+* xml2
+* tiff
+* hdf5
+
 If one would like to use xml2 within CentOS (of course libxml2 package should be installed), or ESS Yocto Linux, one should use the following configuration in each module makefile. 
 
 ```
