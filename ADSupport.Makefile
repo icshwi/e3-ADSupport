@@ -17,8 +17,8 @@
 # 
 # Author  : Jeong Han Lee
 # email   : jeonghan.lee@gmail.com
-# Date    : Friday, September  6 23:45:47 CEST 2019
-# version : 0.0.4
+# Date    : Saturday, September  7 00:21:27 CEST 2019
+# version : 0.0.5
 #
 
 ## The following lines are mandatory, please don't change them.
@@ -601,6 +601,7 @@ endif # ($(WITH_SZIP),YES)
 ### This space will leave here for the future, when
 ### ....
 ###
+ifeq ($(WITH_XML2),YES)
 XML2_EXTERNAL:=YES
 ifeq ($(XML2_EXTERNAL),NO)
 XML2TOP = $(APP)/xml2Src
@@ -710,9 +711,16 @@ SOURCES += $(XML2TOP)/xpath.c
 SOURCES += $(XML2TOP)/xpointer.c
 SOURCES += $(XML2TOP)/xmlstring.c
 
+else
+
+LIB_SYS_LIBS += xml2
+ifeq ($(T_A),linux-x86_64)
+USR_INCLUDES += -I/usr/include/libxml2
+else
+USR_INCLUDES += -I$(SDKTARGETSYSROOT)/usr/include/libxml2
+endif
 endif # ($(XML2_EXTERNAL),NO)
-
-
+endif # ($(WITH_XML2),YES)
 
 
 ifeq ($(WITH_TIFF0),YES)
@@ -775,9 +783,6 @@ SOURCES += $(TIFFTOP)/tif_unix.c
 
 else
 
-# We have to combine libADSupport with libjpeg, so
-# we need to add them here if you do use EXTERNAL JPEG
-# 
 LIB_SYS_LIBS += tiff
 ifeq ($(T_A),linux-x86_64)
 USR_INCLUDES += -I/usr/include
@@ -965,9 +970,6 @@ SOURCES += $(JPEGTOP)/jmemnobs.c
 SOURCES += $(JPEGTOP)/decompressJPEG.c
 
 else
-# We have to combine libADSupport with libjpeg, so
-# we need to add them here if you do use EXTERNAL JPEG
-# 
 LIB_SYS_LIBS += jpeg
 ifeq ($(T_A),linux-x86_64)
 USR_INCLUDES += -I/usr/include
@@ -1041,13 +1043,8 @@ SOURCES += $(NETCDFTOP)/libdispatch/dutil.c
 SOURCES += $(NETCDFTOP)/libdispatch/utf8proc.c
 
 SOURCES += $(NETCDFTOP)/liblib/nc_initialize.c
-
-
 else
 
-# We have to combine libADSupport with libjpeg, so
-# we need to add them here if you do use EXTERNAL JPEG
-# 
 LIB_SYS_LIBS += netcdf
 ifeq ($(T_A),linux-x86_64)
 USR_INCLUDES += -I/usr/include
@@ -1055,6 +1052,7 @@ else
 USR_INCLUDES += -I$(SDKTARGETSYSROOT)/usr/include
 endif
 endif # ($(NETCDF_EXTERNAL),NO)
+
 endif # ($(WITH_NETCDF),YES)
 
 

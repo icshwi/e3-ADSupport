@@ -4,73 +4,9 @@
 ## ptions for ADSupport. And we have to use the system libraries as
 ## much as we can.
 ##
-## The ADSupport.makefile has several attempts to make it works
-## but it doesn't take long to figure out that it is impossible
-## to do this within a single ADSupport.so.
 ##
-## Library     |  USE   |  WHERE
-## NETCDF      |  YES   |  External (System lib)
-## JPEG        |  YES   |  External (System lib)
-## ZLIB        |  YES   |  ADSupport
-## BLOSC       |  YES   |  External (System lib)
-## TIFF        |  YES   |  External (System lib)
-## SZIP        |  YES   |  ADSupport
-## HDF5        |  YES   |  External
-## BITSHUFFLE  |  YES   |  ADSupport
-## NEXUS       |  YES   |  ADSupport
-##
-## ldd /epics/base-7.0.3/require/3.1.0/siteMods/ADSupport/1.7.0/lib/linux-x86_64/libADSupport.so
-## linux-vdso.so.1 (0x00007ffea9fcb000)
-## libhdf5_serial.so.103 => /lib/x86_64-linux-gnu/libhdf5_serial.so.103 (0x00007efff75fd000)
-## libhdf5_serial_hl.so.100 => /lib/x86_64-linux-gnu/libhdf5_serial_hl.so.100 (0x00007efff75d7000)
-## libtiff.so.5 => /lib/x86_64-linux-gnu/libtiff.so.5 (0x00007efff7558000)
-## libblosc.so.1 => /lib/libblosc.so.1 (0x00007efff7548000)
-## libjpeg.so.62 => /lib/x86_64-linux-gnu/libjpeg.so.62 (0x00007efff72df000)
-## libnetcdf.so.13 => /lib/x86_64-linux-gnu/libnetcdf.so.13 (0x00007efff719c000)
-## libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 (0x00007efff717b000)
-## librt.so.1 => /lib/x86_64-linux-gnu/librt.so.1 (0x00007efff7171000)
-## libdl.so.2 => /lib/x86_64-linux-gnu/libdl.so.2 (0x00007efff716c000)
-## libstdc++.so.6 => /lib/x86_64-linux-gnu/libstdc++.so.6 (0x00007efff6fe8000)
-## libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007efff6e65000)
-## libgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 (0x00007efff6e49000)
-## libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007efff6c88000)
-## libsz.so.2 => /lib/x86_64-linux-gnu/libsz.so.2 (0x00007efff6a85000)
-## libz.so.1 => /lib/x86_64-linux-gnu/libz.so.1 (0x00007efff6867000)
-## libwebp.so.6 => /lib/x86_64-linux-gnu/libwebp.so.6 (0x00007efff65fe000)
-## libzstd.so.1 => /lib/x86_64-linux-gnu/libzstd.so.1 (0x00007efff655e000)
-## liblzma.so.5 => /lib/x86_64-linux-gnu/liblzma.so.5 (0x00007efff6534000)
-## libjbig.so.0 => /lib/x86_64-linux-gnu/libjbig.so.0 (0x00007efff6326000)
-## liblz4.so.1 => /lib/x86_64-linux-gnu/liblz4.so.1 (0x00007efff6307000)
-## libsnappy.so.1 => /lib/x86_64-linux-gnu/libsnappy.so.1 (0x00007efff60ff000)
-## libcurl-gnutls.so.4 => /lib/x86_64-linux-gnu/libcurl-gnutls.so.4 (0x00007efff6071000)
-## /lib64/ld-linux-x86-64.so.2 (0x00007efff7a58000)
-## libaec.so.0 => /lib/x86_64-linux-gnu/libaec.so.0 (0x00007efff5e67000)
-## libnghttp2.so.14 => /lib/x86_64-linux-gnu/libnghttp2.so.14 (0x00007efff5e3f000)
-## libidn2.so.0 => /lib/x86_64-linux-gnu/libidn2.so.0 (0x00007efff5e20000)
-## librtmp.so.1 => /lib/x86_64-linux-gnu/librtmp.so.1 (0x00007efff5c03000)
-## libssh2.so.1 => /lib/x86_64-linux-gnu/libssh2.so.1 (0x00007efff5bd5000)
-## libpsl.so.5 => /lib/x86_64-linux-gnu/libpsl.so.5 (0x00007efff5bc0000)
-## libnettle.so.6 => /lib/x86_64-linux-gnu/libnettle.so.6 (0x00007efff5b88000)
-## libgnutls.so.30 => /lib/x86_64-linux-gnu/libgnutls.so.30 (0x00007efff59dc000)
-## libgssapi_krb5.so.2 => /lib/x86_64-linux-gnu/libgssapi_krb5.so.2 (0x00007efff598f000)
-## libkrb5.so.3 => /lib/x86_64-linux-gnu/libkrb5.so.3 (0x00007efff58af000)
-## libk5crypto.so.3 => /lib/x86_64-linux-gnu/libk5crypto.so.3 (0x00007efff587b000)
-## libcom_err.so.2 => /lib/x86_64-linux-gnu/libcom_err.so.2 (0x00007efff5875000)
-## libldap_r-2.4.so.2 => /lib/x86_64-linux-gnu/libldap_r-2.4.so.2 (0x00007efff581f000)
-## liblber-2.4.so.2 => /lib/x86_64-linux-gnu/liblber-2.4.so.2 (0x00007efff580e000)
-## libunistring.so.2 => /lib/x86_64-linux-gnu/libunistring.so.2 (0x00007efff568a000)
-## libhogweed.so.4 => /lib/x86_64-linux-gnu/libhogweed.so.4 (0x00007efff5651000)
-## libgmp.so.10 => /lib/x86_64-linux-gnu/libgmp.so.10 (0x00007efff55ce000)
-## libgcrypt.so.20 => /lib/x86_64-linux-gnu/libgcrypt.so.20 (0x00007efff54ae000)
-## libp11-kit.so.0 => /lib/x86_64-linux-gnu/libp11-kit.so.0 (0x00007efff537f000)
-## libtasn1.so.6 => /lib/x86_64-linux-gnu/libtasn1.so.6 (0x00007efff516c000)
-## libkrb5support.so.0 => /lib/x86_64-linux-gnu/libkrb5support.so.0 (0x00007efff515d000)
-## libkeyutils.so.1 => /lib/x86_64-linux-gnu/libkeyutils.so.1 (0x00007efff5156000)
-## libresolv.so.2 => /lib/x86_64-linux-gnu/libresolv.so.2 (0x00007efff513c000)
-## libsasl2.so.2 => /lib/x86_64-linux-gnu/libsasl2.so.2 (0x00007efff511d000)
-## libgpg-error.so.0 => /lib/x86_64-linux-gnu/libgpg-error.so.0 (0x00007efff50fa000)
-## libffi.so.6 => /lib/x86_64-linux-gnu/libffi.so.6 (0x00007efff50f0000)
-
+WITH_XML2:=YES
+XML2_EXTERNAL:=YES
 ##
 WITH_NETCDF:=YES
 NETCDF_EXTERNAL:=YES
