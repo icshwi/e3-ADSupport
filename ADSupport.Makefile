@@ -17,8 +17,8 @@
 # 
 # Author  : Jeong Han Lee
 # email   : jeonghan.lee@gmail.com
-# Date    : Monday, April 15 13:55:33 CEST 2019
-# version : 0.0.3
+# Date    : Friday, September  6 23:45:47 CEST 2019
+# version : 0.0.4
 #
 
 ## The following lines are mandatory, please don't change them.
@@ -791,8 +791,7 @@ endif # ($(WITH_TIFF0),YES)
 
 
 ifeq ($(WITH_BLOSC),YES)
-# We will use ADSupport BLOSC
-BLOSC_EXTERNAL:=NO
+BLOSC_EXTERNAL:=YES
 ifeq ($(BLOSC_EXTERNAL),NO)
 
 BLOSCTOP = $(APP)/bloscSrc
@@ -852,6 +851,13 @@ SOURCES += $(BLOSCTOP)/blosc/shuffle-avx2.c
 SOURCES += $(BLOSCTOP)/blosc/bitshuffle-avx2.c
 endif
 
+else
+LIB_SYS_LIBS += blosc
+ifeq ($(T_A),linux-x86_64)
+USR_INCLUDES += -I/usr/include
+else
+USR_INCLUDES += -I$(SDKTARGETSYSROOT)/usr/include
+endif
 endif # ($(BLOSC_EXTERNAL),NO)
 endif # ($(WITH_BLOSC),YES)
 
