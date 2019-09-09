@@ -533,16 +533,20 @@ else # ($(HDF5_EXTERNAL),NO)
 #
 # CentOS    : /usr/local/lib
 # ESS Yocto : $(SDKTARGETSYSROOT)/usr/lib64
-# Both has the system path, doesn't need any special options
+# Debian    : /usr/lib/x86_64-linux-gnu/hdf5/serial
+#
 LIB_SYS_LIBS += hdf5
 LIB_SYS_LIBS += hdf5_hl
 
-# The followin LDGLAGS is for Debian based system
-# It will be no harm in CentOS based one
+# The followin LDGLAGSs are used for CentOS and Debian together
+# It will be no harm in other based OS one.
+USR_LDFLAGS  += -L/usr/local/lib
 USR_LDFLAGS  += -L/usr/lib/x86_64-linux-gnu/hdf5/serial
+
 
 ifeq ($(T_A),linux-x86_64)
 USR_INCLUDES += -I/usr/include
+# The following header path is only valid for Debian based system
 USR_INCLUDES += -I/usr/include/hdf5/serial
 else
 USR_INCLUDES += -I$(SDKTARGETSYSROOT)/usr/include
