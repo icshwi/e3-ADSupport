@@ -10,11 +10,11 @@ Library     |  USE   |  WHERE
 XML2        |  YES   |  External (System lib)
 NETCDF      |  YES   |  External (System lib)
 JPEG        |  YES   |  External (System lib)
-ZLIB        |  YES   |  ADSupport
 BLOSC       |  YES   |  External (System lib)
 TIFF        |  YES   |  External (System lib)
+HDF5        |  YES   |  External (System lib)
+ZLIB        |  YES   |  ADSupport
 SZIP        |  YES   |  ADSupport
-HDF5        |  YES   |  External
 BITSHUFFLE  |  YES   |  ADSupport
 NEXUS       |  YES   |  ADSupport
 ```
