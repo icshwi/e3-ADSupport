@@ -525,15 +525,23 @@ SOURCES += $(HDF5TOP)/H5detect.c
 else # ($(HDF5_EXTERNAL),NO)
 # We have to combine libADSupport with libhdf5, so
 # we need to add them here if you do use EXTERNAL HDF5
-# We don't use the MPICH2 and OpenMPI, but use serial version
-# 
-LIB_SYS_LIBS += hdf5_serial
-LIB_SYS_LIBS += hdf5_serial_hl
+# We don't use the MPICH2 and OpenMPI, but use serial version in Debian
+#
+# CentOS    : /usr/local/lib
+# ESS Yocto : $(SDKTARGETSYSROOT)/usr/lib64
+# Both has the system path, doesn't need any special options
+LIB_SYS_LIBS += hdf5
+LIB_SYS_LIBS += hdf5_hl
+
+# The followin LDGLAGS is for Debian based system
+# It will be no harm in CentOS based one
+USR_LDFLAGS  += -L/usr/lib/x86_64-linux-gnu/hdf5/serial
 
 ifeq ($(T_A),linux-x86_64)
+USR_INCLUDES += -I/usr/include
 USR_INCLUDES += -I/usr/include/hdf5/serial
 else
-USR_INCLUDES += -I$(SDKTARGETSYSROOT)/usr/include/hdf5/serial
+USR_INCLUDES += -I$(SDKTARGETSYSROOT)/usr/include
 endif
 
 endif # ($(HDF5_EXTERNAL),NO)

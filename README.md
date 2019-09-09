@@ -25,6 +25,17 @@ Therefore, system with ADSupport should have the following system libraries:
 * netcdf
 * jpeg
 * tiff
+* hdf5
+
+On Debian 10, one should use the following command to install packages:
+```
+apt install libxml2 libxml2-dev \
+    libnetcdf-dev libnetcdf13 \
+    libjpeg-dev libjpeg62 \
+    libblosc-dev libblosc1 \
+    libtiff-dev libtiff5 libtiff5-dev \
+    libhdf5-dev 
+```
 
 ## xml2
 ```
