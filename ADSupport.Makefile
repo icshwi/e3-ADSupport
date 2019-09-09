@@ -1,7 +1,6 @@
 #
 #  Copyright (c) 2019      Jeong Han Lee
 #  Copyright (c) 2019      European Spallation Source ERIC
-
 #
 #  The program is free software: you can redistribute
 #  it and/or modify it under the terms of the GNU General Public License
@@ -540,16 +539,14 @@ else # ($(HDF5_EXTERNAL),NO)
 LIB_SYS_LIBS += hdf5
 LIB_SYS_LIBS += hdf5_hl
 
-# The followin LDGLAGSs are used for CentOS and Debian together
-# It will be no harm in other based OS one.
-USR_LDFLAGS  += -L/usr/local/lib
-USR_LDFLAGS  += -L/usr/lib/x86_64-linux-gnu/hdf5/serial
-
-
 ifeq ($(T_A),linux-x86_64)
 USR_INCLUDES += -I/usr/include
 # The following header path is only valid for Debian based system
 USR_INCLUDES += -I/usr/include/hdf5/serial
+# The followin LDGLAGSs are used for CentOS and Debian together
+# It will be no harm in other based OS one.
+USR_LDFLAGS  += -L/usr/local/lib
+USR_LDFLAGS  += -L/usr/lib/x86_64-linux-gnu/hdf5/serial
 else
 USR_INCLUDES += -I$(SDKTARGETSYSROOT)/usr/include
 endif
