@@ -1,5 +1,7 @@
 #
 #  Copyright (c) 2019      Jeong Han Lee
+#  Copyright (c) 2019      European Spallation Source ERIC
+
 #
 #  The program is free software: you can redistribute
 #  it and/or modify it under the terms of the GNU General Public License
@@ -17,8 +19,8 @@
 # 
 # Author  : Jeong Han Lee
 # email   : jeonghan.lee@gmail.com
-# Date    : Saturday, September  7 00:21:27 CEST 2019
-# version : 0.0.5
+# Date    : Monday, September  9 11:53:48 CEST 2019
+# version : 0.0.6
 #
 
 ## The following lines are mandatory, please don't change them.
