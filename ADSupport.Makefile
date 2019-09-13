@@ -18,8 +18,8 @@
 # 
 # Author  : Jeong Han Lee
 # email   : jeonghan.lee@gmail.com
-# Date    : Friday, September 13 10:27:27 CEST 2019
-# version : 0.0.7
+# Date    : Friday, September 13 15:16:36 CEST 2019
+# version : 0.0.8
 #
 
 ## The following lines are mandatory, please don't change them.
@@ -44,6 +44,8 @@ USR_CPPFLAGS += -Wno-unused-variable
 USR_CPPFLAGS += -Wno-unused-function
 USR_CPPFLAGS += -Wno-unused-but-set-variable
 
+# Ubuntu needs the following option
+USR_LDFLAGS += -Wl,--no-as-needed
 
 WITH_GRAPHICSMAGICK:=NO
 ifeq ($(WITH_GRAPHICSMAGICK),YES)
