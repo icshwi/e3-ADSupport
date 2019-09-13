@@ -18,8 +18,8 @@
 # 
 # Author  : Jeong Han Lee
 # email   : jeonghan.lee@gmail.com
-# Date    : Monday, September  9 11:53:48 CEST 2019
-# version : 0.0.6
+# Date    : Friday, September 13 10:27:27 CEST 2019
+# version : 0.0.7
 #
 
 ## The following lines are mandatory, please don't change them.
@@ -27,8 +27,8 @@ where_am_I := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 include $(E3_REQUIRE_TOOLS)/driver.makefile
 include $(E3_REQUIRE_CONFIG)/DECOUPLE_FLAGS
 
-EXCLUDE_ARCHS = linux-ppc64e6500
-EXCLUDE_ARCHS += linux-corei7-poky
+#EXCLUDE_ARCHS += linux-ppc64e6500
+#EXCLUDE_ARCHS += linux-corei7-poky
 
 
 
