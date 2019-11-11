@@ -1,37 +1,55 @@
-#ADSupport module configuration
-# WITH_ is mandatory in order to export these variables to *.Makefile
-# RULE_EXPORT will export WITH_* variables automatically
-# 
+## Please DO NOT CHANGE the following options.
+## Due to the complicated source codes dependency upon
+## ADSupport's various libraries, we have to use few limited o
+## ptions for ADSupport. And we have to use the system libraries as
+## much as we can.
+##
+##
+WITH_XML2:=YES
+XML2_EXTERNAL:=YES
+##
 WITH_NETCDF:=YES
+NETCDF_EXTERNAL:=YES
+##
 WITH_JPEG:=YES
-WITH_JPEG_EXTERNAL:=YES
+JPEG_EXTERNAL:=YES
+##
 WITH_ZLIB:=YES
-WITH_SZIP:=YES
-
-
-# TIFF depends on ZLIB, so WITH_ZLIB:=YES
-WITH_TIFF:=YES
-
-# BLOSC depends on ZLIB, so WITH_ZLIB:=YES
+##
+## BLOSC depends on ZLIB, so WITH_ZLIB:=YES
+## We cannot use BLOSC_EXTERNAL=NO, because there are multiple definition of several functions
+## in Blosc and bitshuffle.
 WITH_BLOSC:=YES
-
-
-## Current implementation doesn't support both XML2 and GRAPHICSMAGICK.
-## One should use the external libraries instead of ADSupport
-
-# XML2 depends on ZLIB, so WITH_ZLIB:=YES
-# WITH_XML2:=YES : External (system xml2) will be used
-# WITH_XML2:=NO  : ADSupport xml2 will be used
-WITH_XML2:=NO
-# GRAPHICSMAGICK depends on ZLIB, TIFF, XML2, JPEG
-WITH_GRAPHICSMAGICK:=NO
-
-# HDF5 depends on SZIP, ZLIB, BLOSC
+BLOSC_EXTERNAL:=YES
+##
+##
+# TIFF depends on ZLIB, so WITH_ZLIB:=YES
+# WITH_TIFF cannot be real variable due to unknown reasons
+# So, have to change it to WITH_TIFF0, which is also defined
+# in ADSupport.Makefile
+#
+WITH_TIFF0:=YES
+TIFF_EXTERNAL:=YES
+##
+##
+WITH_SZIP:=YES
+##
+##
 WITH_HDF5:=YES
-
-# NEXUS depends on HDF5
+HDF5_EXTERNAL:=YES
+##
+##
+WITH_BITSHUFFLE:=YES
+##
+##
 WITH_NEXUS:=YES
+##
+##
 
+# The definitions shown below can also be placed in an untracked CONFIG_OPTIONS.local
+-include $(TOP)/configure/CONFIG_OPTIONS.local
 
-
-
+# It can be removed one year later, because _EXTERNAL was added to require global
+EXPORT_VARS+=$(filter %_EXTERNAL%,$(.VARIABLES))
+EXPORT_VARS+=BLOSC_SSE2
+EXPORT_VARS+=BLOSC_AVX2
