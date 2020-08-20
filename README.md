@@ -1,3 +1,7 @@
+# Deprecation notice
+
+2020-08-20: This remote has been deprecated. Moved to https://gitlab.esss.lu.se/e3/area/e3-ADSupport.
+
 # e3-ADSupport
 
 This is the ESS customized single library (ADSupport) in order to integrate ADCore and others modules. However, due to E3 building system, we cannot use them as a single module due to the E3 building system and its compilicated dependency within ADSupport. Thus, in order to keep a single module, we have to use Linux system libraries as much as possible. In addition, we exclude `GraphicsMagick`. 
